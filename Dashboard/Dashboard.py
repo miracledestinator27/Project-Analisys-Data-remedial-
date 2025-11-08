@@ -45,7 +45,7 @@ with st.sidebar:
     start_date, end_date = st.date_input(
         label='Date Range',
         value=(daily_metrics_df['order_purchase_timestamp'].min().date(), 
-            daily_metrics_df['order_purchase_timestamp'].max().date()
+            daily_metrics_df['order_purchase_timestamp'].max().date())
 
 # menggonversi input tanggal ke datetime
 start_date = pd.to_datetime(start_date)
