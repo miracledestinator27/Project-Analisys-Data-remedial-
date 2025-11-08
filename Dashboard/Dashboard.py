@@ -4,7 +4,6 @@ import matplotlib.image as mpimg
 import seaborn as sns
 import streamlit as st
 import urllib
-from func import DataAnalyzer
 
 sns.set(style='dark')
 st.set_option('deprecation.showPyplotGlobalUse', False)
