@@ -5,6 +5,7 @@ import seaborn as sns
 import numpy as np
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
+
 customers_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\customers_dataset.csv")
 geolocation_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\geolocation_dataset.csv")
 order_items_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_items_dataset.csv")
