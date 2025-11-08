@@ -6,7 +6,7 @@ import streamlit as st
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
 
-customers_df = pd.read_csv(".\E-commerce-public-dataset\E-Commerce Public Dataset\customers_dataset.csv")
+customers_df = pd.read_csv("\E-commerce-public-dataset\E-Commerce Public Dataset\customers_dataset.csv")
 geolocation_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\geolocation_dataset.csv")
 order_items_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_items_dataset.csv")
 order_payments_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_payments_dataset.csv")
