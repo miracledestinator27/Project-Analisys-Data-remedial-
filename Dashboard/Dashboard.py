@@ -21,39 +21,15 @@ order_items_df['month'] = order_items_df['shipping_limit_date'].dt.strftime('%B'
 order_items_df['year'] = order_items_df['shipping_limit_date'].dt.year
 order_items_df['month_num'] = order_items_df['shipping_limit_date'].dt.month
 
-# fungsi untuk membuat metric harian
-def create_daily_metrics_df(orders_df):
-    datetime_columns = ["order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"]
-    for column in datetime_columns: 
-        orders_df[column] = pd.to_datetime(orders_df[column])
-    daily_df = orders_df.resample(rule='D', on='order_purchase_timestamp').agg({
-        'order_id': 'nunique',  # Unique orders
-        'order_status': 'count'  # Total orders
-    }).reset_index()
-    daily_df.rename(columns={'order_id': 'order_count', 'order_status': 'total_orders'}, inplace=True)
-    return daily_df
+# Mengelompokkan data berdasarkan tahun, bulan, dan menghitung total penjualan per bulan
+monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
+    "price": "sum",
+    "freight_value": "sum",
+    "order_id": "nunique"  # Menghitung jumlah order unik
+}).reset_index()
 
-# membuat dataframe metric harian
-print ("ORDERS TABLE")
-orders_df = pd.read_csv("orders_dataset.csv")
-orders_df.head()
-daily_metrics_df = create_daily_metrics_df(orders_df)
-
-# sidebar untuk input tanggal
-with st.sidebar:
-    start_date, end_date = st.date_input(
-        label='Date Range',
-        value=(daily_metrics_df['order_purchase_timestamp'].min().date(), 
-            daily_metrics_df['order_purchase_timestamp'].max().date())
-    )
-
-# menggonversi input tanggal ke datetime
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
-
-# Filter data berdasarkan data input
-main_df = daily_metrics_df[(daily_metrics_df['order_purchase_timestamp'] >= start_date) & 
-                            (daily_metrics_df['order_purchase_timestamp'] <= end_date)]
+monthly_sales_df['month_year'] = monthly_sales_df['month'] + ' ' + monthly_sales_df['year'].astype(str)
+monthly_sales_df.sort_values(by=['year', 'month_num'], inplace=True)
 
 # --- Streamlit Dashboard ---
 
