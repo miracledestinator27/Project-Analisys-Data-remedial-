@@ -43,7 +43,7 @@ daily_metrics_df = create_daily_metrics_df(orders_df)
 # sidebar untuk input tanggal
 with st.sidebar:
     start_date, end_date = st.date_input()
-        label='Date Range',
+        label='date range',
         value=(daily_metrics_df['order_purchase_timestamp'].min().date(), 
             daily_metrics_df['order_purchase_timestamp'].max().date())
 
