@@ -1,12 +1,21 @@
+import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import seaborn as sns
-import streamlit as st
-import urllib
+import numpy as np
 
 sns.set(style='dark')
-st.set_option('deprecation.showPyplotGlobalUse', False)
+# Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
+customers_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\customers_dataset.csv")
+geolocation_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\geolocation_dataset.csv")
+order_items_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_items_dataset.csv")
+order_payments_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_payments_dataset.csv")
+order_reviews_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\order_reviews_dataset.csv")
+orders_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\orders_dataset.csv")
+category_df = pd.read_csv("dE-commerce-public-dataset\E-Commerce Public Dataset\product_category_name_translation.csv")
+product_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\products_dataset.csv")
+sellers_df = pd.read_csv("E-commerce-public-dataset\E-Commerce Public Dataset\sellers_dataset.csv")
+
 
 # Membuat class DataAnalyzer untuk analisis data
 class DataAnalyzer:
