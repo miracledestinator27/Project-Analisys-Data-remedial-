@@ -21,22 +21,6 @@ order_items_df['month'] = order_items_df['shipping_limit_date'].dt.strftime('%B'
 order_items_df['year'] = order_items_df['shipping_limit_date'].dt.year
 order_items_df['month_num'] = order_items_df['shipping_limit_date'].dt.month
 
-# Membuat class DataAnalyzer untuk analisis data
-class DataAnalyzer:
-    def __init__(self, df):
-        self.df = df
-
-# Membuat fungsi produk paling banyak dibeli
-    def get_top_categories(self, n=10):
-        category_counts = self.df['product_category_name'].value_counts().reset_index()
-        category_counts.columns = ['product_category_name', 'total_orders']
-        return category_counts.head(n)
-# Membuat fungsi total seller terbanyak
-    def get_state_sellers_counts(self):
-        state_sellers_counts = self.df.groupby("customer_state")["order_id"].count().reset_index()
-        state_sellers_counts.columns = ["customer_state", "total_orders"]
-        return state_sellers_counts
-
 # fungsi untuk membuat metric harian
 def create_daily_metrics_df(orders_df):
     datetime_columns = ["order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"]
@@ -61,8 +45,7 @@ with st.sidebar:
     start_date, end_date = st.date_input(
         label='Date Range',
         value=(daily_metrics_df['order_purchase_timestamp'].min().date(), 
-            daily_metrics_df['order_purchase_timestamp'].max().date())
-    )
+            daily_metrics_df['order_purchase_timestamp'].max().date()
 
 # menggonversi input tanggal ke datetime
 start_date = pd.to_datetime(start_date)
