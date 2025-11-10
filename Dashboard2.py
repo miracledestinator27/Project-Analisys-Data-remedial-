@@ -35,50 +35,175 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
 
 # --- Streamlit Dashboard ---
 
-# Streamlit header
-st.header('E-commerce Dashboard')
+st.set_page_config(page_title="E-Commerce Geo Dashboard", layout="wide")
+st.title("🗺️ E-Commerce Geolocation & Purchase Analysis Dashboard")
 
-# --- Judul Halaman ---
-st.title("Sebaran Pelanggan di Brasil")
+st.markdown("""
+Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
+dengan visualisasi yang terintegrasi dalam format Streamlit.
+""")
 
-# --- Contoh data (ganti dengan data asli customers_silver) ---
-# Pastikan ada kolom: 'geolocation_lat', 'geolocation_lng', dan 'customer_unique_id'
-data = {
-    'geolocation_lat': [-23.5, -22.9, -19.9, -3.7, -15.8, -8.0],
-    'geolocation_lng': [-46.6, -43.2, -43.9, -38.5, -47.9, -34.9],
-    'customer_unique_id': ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
-}
-customers_silver = pd.DataFrame(data)
+# ==============================
+# 🧩 DATA PREPARATION
+# ==============================
+# (⚠️ Asumsikan dataframes berikut sudah tersedia di memori)
+# orders_df, customers_df, geolocation_df
 
-# --- Fungsi untuk plot peta ---
-def plot_brazil_map(data):
-    # Ambil gambar peta Brasil dari URL
-    image_url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
-    with urllib.request.urlopen(image_url) as url:
-        brazil = mpimg.imread(url, 'jpg')
+# Contoh dummy data (hapus ini jika kamu sudah punya dataframe asli)
+import numpy as np
+np.random.seed(42)
+geolocation_df = pd.DataFrame({
+    'geolocation_zip_code_prefix': np.random.randint(10000, 99999, 100),
+    'geolocation_city': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
+    'geolocation_state': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
+    'geolocation_lat': np.random.uniform(-33.7, 5.3, 100),
+    'geolocation_lng': np.random.uniform(-74.0, -34.0, 100)
+})
+customers_df = pd.DataFrame({
+    'customer_id': [f"C{i}" for i in range(1, 51)],
+    'customer_unique_id': [f"U{i}" for i in range(1, 51)],
+    'customer_zip_code_prefix': np.random.choice(geolocation_df['geolocation_zip_code_prefix'], 50)
+})
+orders_df = pd.DataFrame({
+    'order_id': [f"O{i}" for i in range(1, 100)],
+    'customer_id': np.random.choice(customers_df['customer_id'], 99),
+    'order_status': np.random.choice(['delivered', 'shipped', 'cancelled'], 99)
+})
 
-    # Plot titik pelanggan
-    fig, ax = plt.subplots(figsize=(20, 20))
-    ax.scatter(
-        data["geolocation_lng"], 
-        data["geolocation_lat"], 
-        s=10.0, 
-        alpha=0.3, 
-        c='yellow'
+# ==============================
+# 🏙️ GELOCATION ANALYSIS
+# ==============================
+st.header("🏙️ Analisis Kode Pos & State")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    other_state_geolocation = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix'])['geolocation_state']
+        .nunique()
+        .reset_index(name='count')
     )
-    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
-    plt.axis('off')
-    plt.title("Sebaran Pelanggan di Brasil", fontsize=16)
-    plt.tight_layout()
+    multi_state_zip = other_state_geolocation[other_state_geolocation['count'] >= 2]
+    st.metric("Jumlah kode pos di lebih dari 1 state", multi_state_zip.shape[0])
+    st.dataframe(multi_state_zip)
 
+with col2:
+    min_state = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
+        .size()
+        .reset_index(name='count')
+        .drop_duplicates(subset='geolocation_zip_code_prefix')
+        .drop('count', axis=1)
+    )
+    st.write("**State representatif per kode pos:**")
+    st.dataframe(min_state.head(10))
+
+# ==============================
+# 🔗 MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
+# ==============================
+st.header("🔗 Penggabungan Data Orders, Customers, dan Geolocation")
+
+orders_customers_geolocation_df = (
+    orders_df
+    .merge(customers_df, on='customer_id', how='left')
+    .merge(
+        geolocation_df,
+        left_on='customer_zip_code_prefix',
+        right_on='geolocation_zip_code_prefix',
+        how='left'
+    )
+)
+
+st.dataframe(orders_customers_geolocation_df.head())
+
+# ==============================
+# 📊 PURCHASES BY STATE
+# ==============================
+st.header("📊 Jumlah Pembelian per State")
+
+purchases_by_state = (
+    orders_customers_geolocation_df
+    .groupby('geolocation_state')['order_id']
+    .nunique()
+    .reset_index()
+    .rename(columns={'geolocation_state': 'State', 'order_id': 'Total Orders'})
+)
+
+locations_fewest_purchases = purchases_by_state.sort_values(by='Total Orders', ascending=True)
+
+col3, col4 = st.columns(2)
+
+with col3:
+    st.subheader("📉 State dengan Pembelian Paling Sedikit")
+    st.dataframe(locations_fewest_purchases.head(10))
+
+with col4:
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
+    ax.set_title("Jumlah Pembelian per State")
+    ax.set_xlabel("State")
+    ax.set_ylabel("Total Orders")
+    st.pyplot(fig)
+
+# ==============================
+# 🧭 CUSTOMERS SILVER & GEOLOCATION SILVER
+# ==============================
+st.header("🧭 Customers Silver Dataset")
+
+customers_silver = customers_df.merge(
+    geolocation_df,
+    left_on='customer_zip_code_prefix',
+    right_on='geolocation_zip_code_prefix',
+    how='inner'
+)
+
+geolocation_silver = (
+    geolocation_df
+    .groupby(['geolocation_zip_code_prefix', 'geolocation_city', 'geolocation_state'])[['geolocation_lat', 'geolocation_lng']]
+    .median()
+    .reset_index()
+)
+geolocation_silver = geolocation_silver.merge(
+    min_state,
+    on=['geolocation_zip_code_prefix', 'geolocation_state'],
+    how='inner'
+)
+
+st.dataframe(customers_silver.head(10))
+
+# ==============================
+# 🗺️ MAP VISUALIZATION (CUSTOMERS)
+# ==============================
+st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
+
+def plot_brazil_map(data):
+    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
+    with urllib.request.urlopen(url) as u:
+        brazil = mpimg.imread(u, 'jpg')
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    ax.imshow(brazil, extent=[-75, -34, -34, 6], zorder=1)
+    ax.scatter(
+        data["geolocation_lng"],
+        data["geolocation_lat"],
+        s=10,
+        alpha=0.6,
+        color='yellow',
+        edgecolor='black',
+        linewidth=0.3,
+        zorder=2
+    )
+    ax.set_xlim(-75, -34)
+    ax.set_ylim(-34, 6)
+    ax.axis('off')
+    ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
+    plt.tight_layout()
     return fig
 
-# --- Hilangkan duplikat pelanggan dan tampilkan peta ---
-unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
-fig = plot_brazil_map(unique_customers)
-
-# --- Tampilkan di Streamlit ---
-st.pyplot(fig)
+fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
+st.pyplot(fig_map)
 
 def default_plot(ax, spines):
     ax = plt.gca()
@@ -185,6 +310,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
