@@ -285,20 +285,20 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
-    fig, ax = plt.subplots(figsize=(18, 18))
-    ax.imshow(brazil, extent=[65, -24, -24, 5], zorder=1)
+    fig, ax = plt.subplots(figsize=(10, 10))
+    ax.imshow(brazil, extent=[-75, -34, -34, 6], zorder=1)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=7,
-        alpha=0.7,
+        s=10,
+        alpha=0.6,
         color='yellow',
-        edgecolor='red',
-        linewidth=0.6,
+        edgecolor='black',
+        linewidth=0.3,
         zorder=2
     )
-    ax.set_xlim(-65, -24)
-    ax.set_ylim(-24, 5)
+    ax.set_xlim(-75, -34)
+    ax.set_ylim(-34, 6)
     ax.axis('off')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
@@ -306,6 +306,22 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
+# ==============================
+# 💾 EXPORT DATA
+# ==============================
+st.header("💾 Ekspor Dataset Customers Silver")
+
+csv_data = customers_silver.to_csv(index=False).encode('utf-8')
+st.download_button(
+    label="📥 Unduh Customers Silver CSV",
+    data=csv_data,
+    file_name="customers_silver.csv",
+    mime="text/csv"
+)
+
+st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
