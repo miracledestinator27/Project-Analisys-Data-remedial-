@@ -58,11 +58,11 @@ def plot_brazil_map(data):
         brazil = mpimg.imread(url, 'jpg')
 
     # Plot titik pelanggan
-    fig, ax = plt.subplots(figsize=(14, 14))
+    fig, ax = plt.subplots(figsize=(20, 20))
     ax.scatter(
         data["geolocation_lng"], 
         data["geolocation_lat"], 
-        s=0.3, 
+        s=10.0, 
         alpha=0.3, 
         c='yellow'
     )
@@ -185,6 +185,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
