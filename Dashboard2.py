@@ -171,9 +171,9 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(image_url) as url:
         brazil = mpimg.imread(url, 'jpg')
 
-    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
     # Plot titik pelanggan
     fig, ax = plt.subplots(figsize=(14, 14))
+    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
     ax.scatter(
         data["geolocation_lng"], 
         data["geolocation_lat"], 
@@ -194,6 +194,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
