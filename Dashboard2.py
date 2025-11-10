@@ -179,7 +179,7 @@ def plot_brazil_map(data):
         c='yellow'
     )
     ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
-    plt.axis('off')
+    plt.axis('on')
     plt.title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
 
@@ -191,5 +191,6 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
