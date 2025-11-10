@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import streamlit as st
-import urllib
+import urllib.request
 import matplotlib.image as mpimg
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
@@ -174,8 +174,8 @@ def plot_brazil_map(data):
     ax.scatter(
         data["geolocation_lng"], 
         data["geolocation_lat"], 
-        s=3, 
-        #alpha=0.3, 
+        s=5.0, 
+        alpha=1.0, 
         c='yellow'
     )
     ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
@@ -191,6 +191,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
