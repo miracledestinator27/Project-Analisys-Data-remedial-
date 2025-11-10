@@ -286,7 +286,7 @@ def plot_brazil_map(data):
         brazil = mpimg.imread(u, 'jpg')
 
     fig, ax = plt.subplots(figsize=(10, 10))
-    ax.imshow(brazil, extent=[-75, -34, -34, 6], zorder=1)
+    ax.imshow(brazil, extent=[-175, -134, -134, 16], zorder=1)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
@@ -297,8 +297,8 @@ def plot_brazil_map(data):
         linewidth=0.3,
         zorder=5
     )
-    ax.set_xlim(-75, -34)
-    ax.set_ylim(-34, 6)
+    ax.set_xlim(-175, -134)
+    ax.set_ylim(-134, 16)
     ax.axis('off')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
@@ -321,6 +321,7 @@ st.download_button(
 )
 
 st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
