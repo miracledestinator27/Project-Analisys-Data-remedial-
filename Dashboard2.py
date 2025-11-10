@@ -285,8 +285,8 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
-    fig, ax = plt.subplots(figsize=(2, 2))
-    ax.imshow(brazil, extent=[-65, -24, -24, 5], zorder=1)
+    fig, ax = plt.subplots(figsize=(18, 18))
+    ax.imshow(brazil, extent=[-45, -4, -4, 3], zorder=1)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
@@ -297,8 +297,8 @@ def plot_brazil_map(data):
         linewidth=0.6,
         zorder=3
     )
-    ax.set_xlim(-65, -24)
-    ax.set_ylim(-24, 5)
+    ax.set_xlim(-45, -4)
+    ax.set_ylim(-4, 3)
     ax.axis('off')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
