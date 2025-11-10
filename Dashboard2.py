@@ -164,16 +164,9 @@ data = {
 }
 customers_silver = pd.DataFrame(data)
 
-# --- Fungsi untuk plot peta ---
-def plot_brazil_map(data):
-    # Ambil gambar peta Brasil dari URL
-    image_url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
-    with urllib.request.urlopen(image_url) as url:
-        brazil = mpimg.imread(url, 'jpg')
-
     # Plot titik pelanggan
     fig, ax = plt.subplots(figsize=(14, 14))
-    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
+    ax.imshow(brazil, extent=[-73.98283055, -33.8,-33.75116944,5.4])
     ax.scatter(
         data["geolocation_lng"], 
         data["geolocation_lat"], 
@@ -194,6 +187,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
