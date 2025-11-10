@@ -192,10 +192,6 @@ def plot_brazil_map(data):
         zorder=2
     )
 
-    # Set axis to cover all points
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-
     ax.axis('off')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
@@ -205,6 +201,7 @@ def plot_brazil_map(data):
 # === Plot in Streamlit ===
 fig = plot_brazil_map(unique_customers)
 st.pyplot(fig)
+
 
 
 
