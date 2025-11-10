@@ -105,3 +105,45 @@ plt.tight_layout()
 # --- Tampilkan di Streamlit ---
 st.title("Visualisasi Rata-rata Transaksi per Kota")
 st.pyplot(fig)
+
+# --- Judul Halaman ---
+st.title("Top 10 Kategori Produk Terbanyak")
+
+# --- Contoh Data (ganti dengan data aslimu) ---
+data = {
+    "product_category_name": [
+        "eletronicos", "beleza_saude", "moveis_decoracao", "esporte_lazer",
+        "informatica_acessorios", "brinquedos", "telefonia", "relogios_presentes",
+        "perfumaria", "automotivo", "papelaria", "construcao_ferramentas"
+    ],
+    "total_orders": [5200, 4300, 3900, 3700, 3400, 3100, 3000, 2700, 2500, 2300, 2200, 2100]
+}
+
+category_counts = pd.DataFrame(data)
+
+# --- Urutkan dan ambil 10 teratas ---
+top_categories = category_counts.sort_values(by="total_orders", ascending=False).head(10)
+
+# --- Tampilkan tabel di Streamlit ---
+st.subheader("Top 10 Kategori Produk Terbanyak (Tabel)")
+st.dataframe(top_categories.reset_index(drop=True))
+
+# --- Visualisasi Bar Chart ---
+st.subheader("Visualisasi Top 10 Kategori Produk Terbanyak")
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(
+    x="product_category_name",
+    y="total_orders",
+    data=top_categories,
+    palette="viridis",
+    ax=ax
+)
+ax.set_title("Top 10 Kategori Produk Terbanyak (Jumlah Order)")
+ax.set_xlabel("Kategori Produk")
+ax.set_ylabel("Jumlah Order")
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+# --- Tampilkan di Streamlit ---
+st.pyplot(fig)
