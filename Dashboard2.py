@@ -33,9 +33,6 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
     "order_id": "nunique"  # Menghitung jumlah order unik
 }).reset_index()
 
-monthly_sales_df['month_year'] = monthly_sales_df['month'] + ' ' + monthly_sales_df['year'].astype(str)
-monthly_sales_df.sort_values(by=['year', 'month_num'], inplace=True)
-
 # --- Streamlit Dashboard ---
 
 # Streamlit header
@@ -286,6 +283,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
