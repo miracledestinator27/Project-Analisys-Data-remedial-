@@ -169,37 +169,53 @@ unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
 
 # --- Plot function ---
 def plot_brazil_map(data):
-    # Read background image
+    # Read background map image
     url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
     with urllib.request.urlopen(url) as u:
         brazil_img = mpimg.imread(u, 'jpg')
 
-    # Create plot
+    # Get bounds dynamically based on data
+    min_lng, max_lng = data['geolocation_lng'].min(), data['geolocation_lng'].max()
+    min_lat, max_lat = data['geolocation_lat'].min(), data['geolocation_lat'].max()
+
+    # Add margins to avoid cropping
+    margin_x = (max_lng - min_lng) * 0.1
+    margin_y = (max_lat - min_lat) * 0.1
+
+    x_min = min_lng - margin_x
+    x_max = max_lng + margin_x
+    y_min = min_lat - margin_y
+    y_max = max_lat + margin_y
+
+    # Create figure
     fig, ax = plt.subplots(figsize=(10, 10))
 
-    # Show the map FIRST (so scatter appears above it)
-    ax.imshow(brazil_img, extent=[-78.98283055, -25.8, -33.75116944, 5.4], zorder=1)
+    # Plot background map covering full extent of Brazil
+    ax.imshow(brazil_img, extent=[-75, -34, -34, 6], zorder=1)
 
-    # Scatter points
+    # Scatter customers
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
         s=10,
-        alpha=0.6,
+        alpha=0.7,
         color='yellow',
         edgecolor='black',
         linewidth=0.3,
         zorder=2
     )
 
-    ax.set_xlim([-78.98283055, -25.8])
-    ax.set_ylim([-33.75116944, 5.4])
+    # Set axis to cover all points
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+
     ax.axis('off')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
+    plt.tight_layout()
 
     return fig
 
-# --- Generate and show figure ---
+# === Plot in Streamlit ===
 fig = plot_brazil_map(unique_customers)
 st.pyplot(fig)
 
