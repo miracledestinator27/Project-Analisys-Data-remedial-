@@ -290,11 +290,11 @@ def plot_brazil_map(data):
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=4,
-        alpha=0.3,
+        s=5,
+        alpha=0.6,
         color='yellow',
         edgecolor='black',
-        linewidth=0.3,
+        linewidth=0.1,
         zorder=2
     )
     ax.set_xlim(-85, -44)
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
