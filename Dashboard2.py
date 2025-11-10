@@ -174,7 +174,7 @@ def plot_brazil_map(data):
     ax.scatter(
         data["geolocation_lng"], 
         data["geolocation_lat"], 
-        s=0.3, 
+        s=3, 
         #alpha=0.3, 
         c='yellow'
     )
@@ -191,6 +191,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
