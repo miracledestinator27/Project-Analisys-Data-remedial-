@@ -184,6 +184,7 @@ def plot_brazil_map(data):
     plt.tight_layout()
 
     return fig
+    st.pyplot(fig)
 
 # --- Hilangkan duplikat pelanggan dan tampilkan peta ---
 unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
@@ -191,6 +192,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
