@@ -297,15 +297,16 @@ def plot_brazil_map(data):
         linewidth=0.3,
         zorder=2
     )
-    ax.set_xlim(-75, -34)
-    ax.set_ylim(-34, 6)
-    ax.axis('off')
+    ax.set_xlim(-70, -28)
+    ax.set_ylim(-28, 4)
+    ax.axis('02')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
     return fig
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
