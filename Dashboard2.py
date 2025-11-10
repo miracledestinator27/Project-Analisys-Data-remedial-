@@ -291,11 +291,11 @@ def plot_brazil_map(data):
         data["geolocation_lng"],
         data["geolocation_lat"],
         s=7,
-        alpha=0.3,
+        alpha=0.8,
         color='yellow',
         edgecolor='black',
-        linewidth=0.2,
-        zorder=1
+        linewidth=0.6,
+        zorder=3
     )
     ax.set_xlim(-65, -24)
     ax.set_ylim(-24, 5)
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
