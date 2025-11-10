@@ -47,11 +47,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_order = daily_orders_df["order_count"].sum()
-    st.markdown(f"Total Order: **{total_order}**")
+    st.markdown("Total Order: **{total_order}**")
 
 with col2:
     total_revenue = daily_orders_df["revenue"].sum()
-    st.markdown(f"Total Revenue: **{total_revenue}**")
+    st.markdown("Total Revenue: **{total_revenue}**")
 
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.lineplot(
@@ -71,11 +71,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_spend = sum_spend_df["total_spend"].sum()
-    st.markdown(f"Total Spend: **{total_spend}**")
+    st.markdown("Total Spend: **{total_spend}**")
 
 with col2:
     avg_spend = sum_spend_df["total_spend"].mean()
-    st.markdown(f"Average Spend: **{avg_spend}**")
+    st.markdown("Average Spend: **{avg_spend}**")
 
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.lineplot(
@@ -97,11 +97,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     total_items = sum_order_items_df["product_count"].sum()
-    st.markdown(f"Total Items: **{total_items}**")
+    st.markdown("Total Items: **{total_items}**")
 
 with col2:
     avg_items = sum_order_items_df["product_count"].mean()
-    st.markdown(f"Average Items: **{avg_items}**")
+    st.markdown("Average Items: **{avg_items}**")
 
 fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(45, 25))
 
@@ -130,11 +130,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     avg_review_score = review_score.mean()
-    st.markdown(f"Average Review Score: **{avg_review_score:.2f}**")
+    st.markdown("Average Review Score: **{avg_review_score:.2f}**")
 
 with col2:
     most_common_review_score = review_score.value_counts().idxmax()
-    st.markdown(f"Most Common Review Score: **{most_common_review_score}**")
+    st.markdown("Most Common Review Score: **{most_common_review_score}**")
 
 fig, ax = plt.subplots(figsize=(12, 6))
 colors = sns.color_palette("viridis", len(review_score))
@@ -162,7 +162,7 @@ tab1, tab2 = st.tabs(["State", "Geolocation"])
 
 with tab1:
     most_common_state = state.customer_state.value_counts().index[0]
-    st.markdown(f"Most Common State: **{most_common_state}**")
+    st.markdown("Most Common State: **{most_common_state}**")
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x=state.customer_state.value_counts().index,
@@ -283,6 +283,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
