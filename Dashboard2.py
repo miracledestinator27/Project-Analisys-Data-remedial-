@@ -6,6 +6,9 @@ import streamlit as st
 import urllib.request
 import matplotlib.image as mpimg
 
+sns.set(style='dark')
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
 
 customers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/customers_dataset.csv")
@@ -150,8 +153,163 @@ plt.tight_layout()
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
 
+# ==============================
+# 🏷️ JUDUL HALAMAN
+# ==============================
+st.title("Analisis Geolokasi dan Aktivitas Pembelian Pelanggan")
+
+st.markdown("""
+Aplikasi ini melakukan analisis **geolokasi pelanggan** dan **aktivitas pembelian** berdasarkan data:
+- `orders_df`
+- `customers_df`
+- `geolocation_df`
+""")
+
+# ==============================
+# 🗂️ UPLOAD DATAFRAME
+# ==============================
+st.subheader("📤 Upload Dataset")
+
+orders_file = st.file_uploader("Upload file orders.csv", type=["csv"])
+customers_file = st.file_uploader("Upload file customers.csv", type=["csv"])
+geolocation_file = st.file_uploader("Upload file geolocation.csv", type=["csv"])
+
+if orders_file and customers_file and geolocation_file:
+    # Membaca data
+    orders_df = pd.read_csv(orders_file)
+    customers_df = pd.read_csv(customers_file)
+    geolocation_df = pd.read_csv(geolocation_file)
+
+    st.success("✅ Semua file berhasil dimuat!")
+
+    # ==============================
+    # 🔍 1. Analisis kode pos yang muncul di lebih dari satu state
+    # ==============================
+    st.subheader("🏙️ Analisis State Unik per Kode Pos")
+
+    other_state_geolocation = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix'])['geolocation_state']
+        .nunique()
+        .reset_index(name='count')
+    )
+
+    multi_state_zip = other_state_geolocation[other_state_geolocation['count'] >= 2]
+
+    st.write(f"Jumlah kode pos yang muncul di lebih dari satu state: **{multi_state_zip.shape[0]}**")
+    st.dataframe(multi_state_zip)
+
+    # ==============================
+    # 🗺️ 2. Ambil state representatif per kode pos
+    # ==============================
+    st.subheader("🗺️ State Representatif per Kode Pos")
+
+    min_state = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
+        .size()
+        .reset_index(name='count')
+        .drop_duplicates(subset='geolocation_zip_code_prefix')
+        .drop('count', axis=1)
+    )
+    st.dataframe(min_state.head(10))
+
+    # ==============================
+    # 🔗 3. Merge orders, customers, dan geolocation
+    # ==============================
+    st.subheader("🔗 Menggabungkan Data Orders, Customers, dan Geolocation")
+
+    orders_customers_geolocation_df = (
+        orders_df
+        .merge(customers_df, on='customer_id', how='left')
+        .merge(
+            geolocation_df,
+            left_on='customer_zip_code_prefix',
+            right_on='geolocation_zip_code_prefix',
+            how='left'
+        )
+    )
+    st.write("✅ Dataframe hasil merge:")
+    st.dataframe(orders_customers_geolocation_df.head())
+
+    # ==============================
+    # 📊 4. Hitung pembelian per state
+    # ==============================
+    st.subheader("📊 Jumlah Pembelian per State")
+
+    purchases_by_state = (
+        orders_customers_geolocation_df
+        .groupby('customer_state')['order_id']
+        .nunique()
+        .reset_index()
+    )
+
+    locations_fewest_purchases = purchases_by_state.sort_values(by='order_id', ascending=True)
+
+    st.write("📉 State dengan jumlah pembelian paling sedikit:")
+    st.dataframe(locations_fewest_purchases.head(10))
+
+    # ==============================
+    # 🧭 5. Membuat Data Customers Silver
+    # ==============================
+    st.subheader("🧭 Membuat Dataset Customers Silver")
+
+    customers_silver = customers_df.merge(
+        geolocation_df,
+        left_on='customer_zip_code_prefix',
+        right_on='geolocation_zip_code_prefix',
+        how='inner'
+    )
+
+    # ==============================
+    # 🪙 6. Membuat Dataset Geolocation Silver
+    # ==============================
+    geolocation_silver = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix', 'geolocation_city', 'geolocation_state'])[['geolocation_lat', 'geolocation_lng']]
+        .median()
+        .reset_index()
+    )
+    geolocation_silver = geolocation_silver.merge(
+        min_state,
+        on=['geolocation_zip_code_prefix', 'geolocation_state'],
+        how='inner'
+    )
+
+    # Hitung state dominan untuk setiap prefix
+    min_state = (
+        geolocation_df
+        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
+        .size()
+        .reset_index(name='count')
+        .sort_values('count', ascending=False)
+        .drop_duplicates('geolocation_zip_code_prefix')
+        .drop('count', axis=1)
+    )
+
+    st.write("📍 State dominan per kode pos:")
+    st.dataframe(min_state.head())
+
+    # ==============================
+    # 💾 7. Simpan hasil akhir
+    # ==============================
+    st.subheader("💾 Simpan Dataset Hasil (Customers Silver)")
+
+    csv_data = customers_silver.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Unduh Customers Silver CSV",
+        data=csv_data,
+        file_name="customers_silver.csv",
+        mime="text/csv"
+    )
+
+    st.success("Proses selesai ✅ — Semua data berhasil diproses!")
+
+else:
+    st.info("Silakan upload ketiga file dataset (orders, customers, dan geolocation) untuk memulai analisis.")
 
  
+
 
 
 
