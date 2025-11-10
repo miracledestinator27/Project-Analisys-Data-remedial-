@@ -285,15 +285,15 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
-    fig, ax = plt.subplots(figsize=(15, 15))
+    fig, ax = plt.subplots(figsize=(20, 20))
     ax.imshow(brazil, extent=[-75, -34, -34, 6], zorder=1)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
         s=16,
         alpha=0.8,
-        color='blue',
-        edgecolor='red',
+        color='red',
+        edgecolor='green',
         linewidth=0.3,
         zorder=2
     )
@@ -321,6 +321,7 @@ st.download_button(
 )
 
 st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
