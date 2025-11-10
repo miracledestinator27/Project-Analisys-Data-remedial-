@@ -175,7 +175,7 @@ def plot_brazil_map(data):
         data["geolocation_lng"], 
         data["geolocation_lat"], 
         s=0.3, 
-        alpha=0.3, 
+        #alpha=0.3, 
         c='yellow'
     )
     ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
@@ -184,7 +184,6 @@ def plot_brazil_map(data):
     plt.tight_layout()
 
     return fig
-    st.pyplot(fig)
 
 # --- Hilangkan duplikat pelanggan dan tampilkan peta ---
 unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
