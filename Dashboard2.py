@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import streamlit as st
+import urllib
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
 
@@ -189,3 +190,4 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
