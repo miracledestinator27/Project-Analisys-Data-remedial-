@@ -174,19 +174,6 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(url) as u:
         brazil_img = mpimg.imread(u, 'jpg')
 
-    # Get bounds dynamically based on data
-    min_lng, max_lng = data['geolocation_lng'].min(), data['geolocation_lng'].max()
-    min_lat, max_lat = data['geolocation_lat'].min(), data['geolocation_lat'].max()
-
-    # Add margins to avoid cropping
-    margin_x = (max_lng - min_lng) * 0.1
-    margin_y = (max_lat - min_lat) * 0.1
-
-    x_min = min_lng - margin_x
-    x_max = max_lng + margin_x
-    y_min = min_lat - margin_y
-    y_max = max_lat + margin_y
-
     # Create figure
     fig, ax = plt.subplots(figsize=(10, 10))
 
