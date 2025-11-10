@@ -39,7 +39,46 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
 st.header('E-commerce Dashboard')
 
 # --- Judul Halaman ---
-st.title("Visualisasi Rata-rata Transaksi per Kota ")
+st.title("Sebaran Pelanggan di Brasil")
+
+# --- Contoh data (ganti dengan data asli customers_silver) ---
+# Pastikan ada kolom: 'geolocation_lat', 'geolocation_lng', dan 'customer_unique_id'
+data = {
+    'geolocation_lat': [-23.5, -22.9, -19.9, -3.7, -15.8, -8.0],
+    'geolocation_lng': [-46.6, -43.2, -43.9, -38.5, -47.9, -34.9],
+    'customer_unique_id': ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
+}
+customers_silver = pd.DataFrame(data)
+
+# --- Fungsi untuk plot peta ---
+def plot_brazil_map(data):
+    # Ambil gambar peta Brasil dari URL
+    image_url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
+    with urllib.request.urlopen(image_url) as url:
+        brazil = mpimg.imread(url, 'jpg')
+
+    # Plot titik pelanggan
+    fig, ax = plt.subplots(figsize=(14, 14))
+    ax.scatter(
+        data["geolocation_lng"], 
+        data["geolocation_lat"], 
+        s=0.3, 
+        alpha=0.3, 
+        c='yellow'
+    )
+    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
+    plt.axis('off')
+    plt.title("Sebaran Pelanggan di Brasil", fontsize=16)
+    plt.tight_layout()
+
+    return fig
+
+# --- Hilangkan duplikat pelanggan dan tampilkan peta ---
+unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
+fig = plot_brazil_map(unique_customers)
+
+# --- Tampilkan di Streamlit ---
+st.pyplot(fig)
 
 def default_plot(ax, spines):
     ax = plt.gca()
@@ -146,6 +185,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
