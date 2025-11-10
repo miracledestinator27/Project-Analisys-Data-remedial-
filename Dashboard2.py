@@ -152,162 +152,145 @@ plt.tight_layout()
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
 
-# ==============================
-# 🏷️ JUDUL HALAMAN
-# ==============================
-st.title("Analisis Geolokasi dan Aktivitas Pembelian Pelanggan")
+# Add text or descriptions
+st.write("**This is a dashboard for analyzing E-Commerce public data.**")
 
-st.markdown("""
-Aplikasi ini melakukan analisis **geolokasi pelanggan** dan **aktivitas pembelian** berdasarkan data:
-- `orders_df`
-- `customers_df`
-- `geolocation_df`
-""")
+# Daily Orders Delivered
+st.subheader("Daily Orders Delivered")
+col1, col2 = st.columns(2)
 
-# ==============================
-# 🗂️ UPLOAD DATAFRAME
-# ==============================
-st.subheader("📤 Upload Dataset")
+with col1:
+    total_order = daily_orders_df["order_count"].sum()
+    st.markdown(f"Total Order: **{total_order}**")
 
-orders_file = st.file_uploader("Upload file orders.csv", type=["csv"])
-customers_file = st.file_uploader("Upload file customers.csv", type=["csv"])
-geolocation_file = st.file_uploader("Upload file geolocation.csv", type=["csv"])
+with col2:
+    total_revenue = daily_orders_df["revenue"].sum()
+    st.markdown(f"Total Revenue: **{total_revenue}**")
 
-if orders_file and customers_file and geolocation_file:
-    # Membaca data
-    orders_df = pd.read_csv(orders_file)
-    customers_df = pd.read_csv(customers_file)
-    geolocation_df = pd.read_csv(geolocation_file)
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.lineplot(
+    x=daily_orders_df["order_approved_at"],
+    y=daily_orders_df["order_count"],
+    marker="o",
+    linewidth=2,
+    color="#90CAF9"
+)
+ax.tick_params(axis="x", rotation=45)
+ax.tick_params(axis="y", labelsize=15)
+st.pyplot(fig)
 
-    st.success("✅ Semua file berhasil dimuat!")
+# Customer Spend Money
+st.subheader("Customer Spend Money")
+col1, col2 = st.columns(2)
 
-    # ==============================
-    # 🔍 1. Analisis kode pos yang muncul di lebih dari satu state
-    # ==============================
-    st.subheader("🏙️ Analisis State Unik per Kode Pos")
+with col1:
+    total_spend = sum_spend_df["total_spend"].sum()
+    st.markdown(f"Total Spend: **{total_spend}**")
 
-    other_state_geolocation = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix'])['geolocation_state']
-        .nunique()
-        .reset_index(name='count')
-    )
+with col2:
+    avg_spend = sum_spend_df["total_spend"].mean()
+    st.markdown(f"Average Spend: **{avg_spend}**")
 
-    multi_state_zip = other_state_geolocation[other_state_geolocation['count'] >= 2]
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.lineplot(
+    data=sum_spend_df,
+    x="order_approved_at",
+    y="total_spend",
+    marker="o",
+    linewidth=2,
+    color="#90CAF9"
+)
 
-    st.write(f"Jumlah kode pos yang muncul di lebih dari satu state: **{multi_state_zip.shape[0]}**")
-    st.dataframe(multi_state_zip)
+ax.tick_params(axis="x", rotation=45)
+ax.tick_params(axis="y", labelsize=15)
+st.pyplot(fig)
 
-    # ==============================
-    # 🗺️ 2. Ambil state representatif per kode pos
-    # ==============================
-    st.subheader("🗺️ State Representatif per Kode Pos")
+# Order Items
+st.subheader("Order Items")
+col1, col2 = st.columns(2)
 
-    min_state = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
-        .size()
-        .reset_index(name='count')
-        .drop_duplicates(subset='geolocation_zip_code_prefix')
-        .drop('count', axis=1)
-    )
-    st.dataframe(min_state.head(10))
+with col1:
+    total_items = sum_order_items_df["product_count"].sum()
+    st.markdown(f"Total Items: **{total_items}**")
 
-    # ==============================
-    # 🔗 3. Merge orders, customers, dan geolocation
-    # ==============================
-    st.subheader("🔗 Menggabungkan Data Orders, Customers, dan Geolocation")
+with col2:
+    avg_items = sum_order_items_df["product_count"].mean()
+    st.markdown(f"Average Items: **{avg_items}**")
 
-    orders_customers_geolocation_df = (
-        orders_df
-        .merge(customers_df, on='customer_id', how='left')
-        .merge(
-            geolocation_df,
-            left_on='customer_zip_code_prefix',
-            right_on='geolocation_zip_code_prefix',
-            how='left'
-        )
-    )
-    st.write("✅ Dataframe hasil merge:")
-    st.dataframe(orders_customers_geolocation_df.head())
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(45, 25))
 
-    # ==============================
-    # 📊 4. Hitung pembelian per state
-    # ==============================
-    st.subheader("📊 Jumlah Pembelian per State")
+sns.barplot(x="product_count", y="product_category_name_english", data=sum_order_items_df.head(5), palette="viridis", ax=ax[0])
+ax[0].set_ylabel(None)
+ax[0].set_xlabel("Number of Sales", fontsize=80)
+ax[0].set_title("Most sold products", loc="center", fontsize=90)
+ax[0].tick_params(axis ='y', labelsize=55)
+ax[0].tick_params(axis ='x', labelsize=50)
 
-    purchases_by_state = (
-        orders_customers_geolocation_df
-        .groupby('customer_state')['order_id']
-        .nunique()
-        .reset_index()
-    )
+sns.barplot(x="product_count", y="product_category_name_english", data=sum_order_items_df.sort_values(by="product_count", ascending=True).head(5), palette="viridis", ax=ax[1])
+ax[1].set_ylabel(None)
+ax[1].set_xlabel("Number of Sales", fontsize=80)
+ax[1].invert_xaxis()
+ax[1].yaxis.set_label_position("right")
+ax[1].yaxis.tick_right()
+ax[1].set_title("Fewest products sold", loc="center", fontsize=90)
+ax[1].tick_params(axis='y', labelsize=55)
+ax[1].tick_params(axis='x', labelsize=50)
 
-    locations_fewest_purchases = purchases_by_state.sort_values(by='order_id', ascending=True)
+st.pyplot(fig)
 
-    st.write("📉 State dengan jumlah pembelian paling sedikit:")
-    st.dataframe(locations_fewest_purchases.head(10))
+# Review Score
+st.subheader("Review Score")
+col1, col2 = st.columns(2)
 
-    # ==============================
-    # 🧭 5. Membuat Data Customers Silver
-    # ==============================
-    st.subheader("🧭 Membuat Dataset Customers Silver")
+with col1:
+    avg_review_score = review_score.mean()
+    st.markdown(f"Average Review Score: **{avg_review_score:.2f}**")
 
-    customers_silver = customers_df.merge(
-        geolocation_df,
-        left_on='customer_zip_code_prefix',
-        right_on='geolocation_zip_code_prefix',
-        how='inner'
-    )
+with col2:
+    most_common_review_score = review_score.value_counts().idxmax()
+    st.markdown(f"Most Common Review Score: **{most_common_review_score}**")
 
-    # ==============================
-    # 🪙 6. Membuat Dataset Geolocation Silver
-    # ==============================
-    geolocation_silver = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix', 'geolocation_city', 'geolocation_state'])[['geolocation_lat', 'geolocation_lng']]
-        .median()
-        .reset_index()
-    )
-    geolocation_silver = geolocation_silver.merge(
-        min_state,
-        on=['geolocation_zip_code_prefix', 'geolocation_state'],
-        how='inner'
-    )
+fig, ax = plt.subplots(figsize=(12, 6))
+colors = sns.color_palette("viridis", len(review_score))
 
-    # Hitung state dominan untuk setiap prefix
-    min_state = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
-        .size()
-        .reset_index(name='count')
-        .sort_values('count', ascending=False)
-        .drop_duplicates('geolocation_zip_code_prefix')
-        .drop('count', axis=1)
-    )
+sns.barplot(x=review_score.index,
+            y=review_score.values,
+            order=review_score.index,
+            palette=colors)
 
-    st.write("📍 State dominan per kode pos:")
-    st.dataframe(min_state.head())
+plt.title("Customer Review Scores for Service", fontsize=15)
+plt.xlabel("Rating")
+plt.ylabel("Count")
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
 
-    # ==============================
-    # 💾 7. Simpan hasil akhir
-    # ==============================
-    st.subheader("💾 Simpan Dataset Hasil (Customers Silver)")
+# Menambahkan label di atas setiap bar
+for i, v in enumerate(review_score.values):
+    ax.text(i, v + 5, str(v), ha='center', va='bottom', fontsize=12, color='black')
 
-    csv_data = customers_silver.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="📥 Unduh Customers Silver CSV",
-        data=csv_data,
-        file_name="customers_silver.csv",
-        mime="text/csv"
-    )
+st.pyplot(fig)
 
-    st.success("Proses selesai ✅ — Semua data berhasil diproses!")
+# Customer Demographic
+st.subheader("Customer Demographic")
+tab1, tab2 = st.tabs(["State", "Geolocation"])
 
-else:
-    st.info("Silakan upload ketiga file dataset (orders, customers, dan geolocation) untuk memulai analisis.")
+with tab1:
+    most_common_state = state.customer_state.value_counts().index[0]
+    st.markdown(f"Most Common State: **{most_common_state}**")
 
- 
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.barplot(x=state.customer_state.value_counts().index,
+                y=state.customer_count.values, 
+                data=state,
+                palette="viridis"
+                    )
+
+    plt.title("Number customers from State", fontsize=15)
+    plt.xlabel("State")
+    plt.ylabel("Number of Customers")
+    plt.xticks(fontsize=12)
+    st.pyplot(fig)
+
 
 
 
