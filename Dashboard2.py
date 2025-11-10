@@ -35,7 +35,6 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
 
 # --- Streamlit Dashboard ---
 
-st.set_page_config(page_title="E-Commerce Geo Dashboard", layout="wide")
 st.title("🗺️ E-Commerce Geolocation & Purchase Analysis Dashboard")
 
 st.markdown("""
@@ -43,14 +42,7 @@ Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, da
 dengan visualisasi yang terintegrasi dalam format Streamlit.
 """)
 
-# ==============================
-# 🧩 DATA PREPARATION
-# ==============================
-# (⚠️ Asumsikan dataframes berikut sudah tersedia di memori)
-# orders_df, customers_df, geolocation_df
 
-# Contoh dummy data (hapus ini jika kamu sudah punya dataframe asli)
-import numpy as np
 np.random.seed(42)
 geolocation_df = pd.DataFrame({
     'geolocation_zip_code_prefix': np.random.randint(10000, 99999, 100),
@@ -310,6 +302,7 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
