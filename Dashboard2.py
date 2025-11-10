@@ -307,9 +307,10 @@ def plot_brazil_map(data):
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
 
-)
+
 
 st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
