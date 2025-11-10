@@ -153,6 +153,54 @@ st.pyplot(fig)
 # --- Judul Halaman ---
 st.title("Sebaran Pelanggan di Brasil")
 
+# --- Judul Halaman ---
+st.title("Analisis Data Geolokasi Berdasarkan Kode Pos")
+
+# --- Contoh data (ganti dengan data asli geolocation_df) ---
+data = {
+    'geolocation_zip_code_prefix': [12345, 12345, 67890, 67890, 67890, 11111, 22222, 22222],
+    'geolocation_state': ['SP', 'RJ', 'SP', 'MG', 'RJ', 'BA', 'RS', 'SC']
+}
+geolocation_df = pd.DataFrame(data)
+
+# --- Analisis 1: Hitung berapa banyak state unik per kode pos ---
+other_state_geolocation = (
+    geolocation_df
+    .groupby(['geolocation_zip_code_prefix'])['geolocation_state']
+    .nunique()
+    .reset_index(name='count')
+)
+
+# --- Filter kode pos yang muncul di lebih dari 1 state ---
+multi_state_zip = other_state_geolocation[other_state_geolocation['count'] >= 2]
+
+# --- Analisis 2: Ambil satu state dominan per kode pos ---
+min_state = (
+    geolocation_df
+    .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
+    .size()
+    .reset_index(name='count')
+    .drop_duplicates(subset='geolocation_zip_code_prefix')
+    .drop('count', axis=1)
+)
+
+# --- Tampilkan hasil di Streamlit ---
+st.subheader("📍 Jumlah State Unik per Kode Pos")
+st.dataframe(other_state_geolocation)
+
+st.write(f"Jumlah kode pos yang terdapat di lebih dari satu state: **{multi_state_zip.shape[0]}**")
+
+st.subheader("🗺️ State Representatif per Kode Pos (Setelah Drop Duplikat)")
+st.dataframe(min_state)
+
+# --- Informasi tambahan ---
+st.markdown("""
+**Keterangan:**
+- `other_state_geolocation` menunjukkan jumlah state unik untuk setiap prefix kode pos.  
+- `multi_state_zip` menunjukkan kode pos yang muncul di lebih dari satu state.  
+- `min_state` adalah hasil seleksi satu state per kode pos (setelah duplikasi dihapus).
+""")
+
 # --- Contoh data (ganti dengan data asli customers_silver) ---
 # Pastikan ada kolom: 'geolocation_lat', 'geolocation_lng', dan 'customer_unique_id'
 data = {
@@ -169,6 +217,7 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(image_url) as url:
         brazil = mpimg.imread(url, 'jpg')
 
+    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
     # Plot titik pelanggan
     fig, ax = plt.subplots(figsize=(14, 14))
     ax.scatter(
@@ -178,7 +227,7 @@ def plot_brazil_map(data):
         alpha=1.0, 
         c='yellow'
     )
-    ax.imshow(brazil, extent=[-78.98283055, -25.8, -33.75116944, 5.4])
+    
     plt.axis('on')
     plt.title("Sebaran Pelanggan di Brasil", fontsize=16)
     plt.tight_layout()
@@ -191,6 +240,7 @@ fig = plot_brazil_map(unique_customers)
 
 # --- Tampilkan di Streamlit ---
 st.pyplot(fig)
+
 
 
 
