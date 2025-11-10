@@ -290,10 +290,10 @@ def plot_brazil_map(data):
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=10,
-        alpha=0.6,
+        s=6,
+        alpha=0.8,
         color='yellow',
-        edgecolor='black',
+        edgecolor='red',
         linewidth=0.3,
         zorder=2
     )
@@ -321,6 +321,7 @@ st.download_button(
 )
 
 st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
