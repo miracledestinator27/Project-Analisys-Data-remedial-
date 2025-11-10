@@ -164,28 +164,43 @@ data = {
 }
 customers_silver = pd.DataFrame(data)
 
-    # Plot titik pelanggan
-    fig, ax = plt.subplots(figsize=(14, 14))
-    ax.imshow(brazil, extent=[-73.98283055, -33.8,-33.75116944,5.4])
+# Drop duplicates
+unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
+
+# --- Plot function ---
+def plot_brazil_map(data):
+    # Read background image
+    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
+    with urllib.request.urlopen(url) as u:
+        brazil_img = mpimg.imread(u, 'jpg')
+
+    # Create plot
+    fig, ax = plt.subplots(figsize=(10, 10))
+
+    # Show the map FIRST (so scatter appears above it)
+    ax.imshow(brazil_img, extent=[-78.98283055, -25.8, -33.75116944, 5.4], zorder=1)
+
+    # Scatter points
     ax.scatter(
-        data["geolocation_lng"], 
-        data["geolocation_lat"], 
-        s=5.0, 
-        alpha=1.0, 
-        c='yellow'
+        data["geolocation_lng"],
+        data["geolocation_lat"],
+        s=10,
+        alpha=0.6,
+        color='yellow',
+        edgecolor='black',
+        linewidth=0.3,
+        zorder=2
     )
-    
-    plt.axis('on')
-    plt.title("Sebaran Pelanggan di Brasil", fontsize=16)
-    plt.tight_layout()
+
+    ax.set_xlim([-78.98283055, -25.8])
+    ax.set_ylim([-33.75116944, 5.4])
+    ax.axis('off')
+    ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
 
     return fig
 
-# --- Hilangkan duplikat pelanggan dan tampilkan peta ---
-unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
+# --- Generate and show figure ---
 fig = plot_brazil_map(unique_customers)
-
-# --- Tampilkan di Streamlit ---
 st.pyplot(fig)
 
 
