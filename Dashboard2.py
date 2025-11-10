@@ -302,53 +302,10 @@ if orders_file and customers_file and geolocation_file:
 
 else:
     st.info("Silakan upload ketiga file dataset (orders, customers, dan geolocation) untuk memulai analisis.")
+    st.pyplot(fig)
 
-# --- Contoh data (ganti dengan data asli customers_silver) ---
-# Pastikan ada kolom: 'geolocation_lat', 'geolocation_lng', dan 'customer_unique_id'
-data = {
-    'geolocation_lat': [-23.5, -22.9, -19.9, -3.7, -15.8, -8.0],
-    'geolocation_lng': [-46.6, -43.2, -43.9, -38.5, -47.9, -34.9],
-    'customer_unique_id': ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
-}
-customers_silver = pd.DataFrame(data)
 
-# Drop duplicates
-unique_customers = customers_silver.drop_duplicates(subset='customer_unique_id')
 
-# --- Plot function ---
-def plot_brazil_map(data):
-    # Read background map image
-    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
-    with urllib.request.urlopen(url) as u:
-        brazil_img = mpimg.imread(u, 'jpg')
-
-    # Create figure
-    fig, ax = plt.subplots(figsize=(10, 10))
-
-    # Plot background map covering full extent of Brazil
-    ax.imshow(brazil_img, extent=[-75, -34, -34, 6], zorder=1)
-
-    # Scatter customers
-    ax.scatter(
-        data["geolocation_lng"],
-        data["geolocation_lat"],
-        s=10,
-        alpha=0.7,
-        color='yellow',
-        edgecolor='black',
-        linewidth=0.3,
-        zorder=2
-    )
-
-    ax.axis('off')
-    ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
-    plt.tight_layout()
-
-    return fig
-
-# === Plot in Streamlit ===
-fig = plot_brazil_map(unique_customers)
-st.pyplot(fig)
 
 
 
