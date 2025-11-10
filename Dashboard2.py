@@ -33,7 +33,117 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
     "order_id": "nunique"  # Menghitung jumlah order unik
 }).reset_index()
 
-# --- Streamlit Dashboard ---
+# Streamlit header
+st.header('E-commerce Dashboard')
+
+
+
+def default_plot(ax, spines):
+    ax = plt.gca()
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.get_xaxis().tick_bottom()
+    ax.get_yaxis().tick_left()
+
+    ax.get_yaxis().set_tick_params(direction='out')
+    ax.get_xaxis().set_tick_params(direction='out')
+
+    for loc, spine in ax.spines.items():
+        if loc in spines:
+            spine.set_position(('outward', 10))  # outward by 10 points
+
+    if 'left' in spines:
+        ax.yaxis.set_ticks_position('left')
+    if 'right' in spines:
+        ax.yaxis.set_ticks_position('right')
+    if 'bottom' in spines:
+        ax.xaxis.set_ticks_position('bottom')
+
+    return ax
+
+# --- Contoh data (ganti ini dengan data aslimu) ---
+# Pastikan struktur mirip dengan yang digunakan di kode kamu
+data = {
+    'customer_state': ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC'],
+    'payment_value_mean': [250, 220, 190, 210, 260, 230],
+    'ci_low': [230, 200, 170, 190, 240, 210],
+    'ci_hi': [270, 240, 210, 230, 280, 250]
+}
+customer_regions = pd.DataFrame(data)
+customer_regions = customer_regions.sort_values(by='payment_value_mean')
+
+# --- Plot menggunakan matplotlib ---
+fig, ax = plt.subplots(figsize=(12, 4))
+ax = default_plot(ax, ['left', 'bottom'])
+plt.xticks(rotation=30)
+plt.xlabel('Kota')
+plt.ylabel('Rata-rata Transaksi')
+plt.xlim(-0.5, len(customer_regions) - 0.5)
+plt.ylim(min(customer_regions['ci_low']) - 10, max(customer_regions['ci_hi']) + 10)
+
+# Plot scatter dan error bars
+plt.scatter(
+    customer_regions['customer_state'],
+    customer_regions['payment_value_mean'],
+    s=100,
+    c=customer_regions['payment_value_mean'],
+    cmap='viridis'
+)
+plt.vlines(
+    customer_regions['customer_state'],
+    customer_regions['ci_low'],
+    customer_regions['ci_hi'],
+    lw=0.5,
+    colors='gray'
+)
+plt.tight_layout()
+
+# --- Tampilkan di Streamlit ---
+st.title("Visualisasi Rata-rata Transaksi per Kota")
+st.pyplot(fig)
+
+# --- Judul Halaman ---
+st.title("Top 10 Kategori Produk Terbanyak")
+
+# --- Contoh Data (ganti dengan data aslimu) ---
+data = {
+    "product_category_name": [
+        "eletronicos", "beleza_saude", "moveis_decoracao", "esporte_lazer",
+        "informatica_acessorios", "brinquedos", "telefonia", "relogios_presentes",
+        "perfumaria", "automotivo", "papelaria", "construcao_ferramentas"
+    ],
+    "total_orders": [5200, 4300, 3900, 3700, 3400, 3100, 3000, 2700, 2500, 2300, 2200, 2100]
+}
+
+category_counts = pd.DataFrame(data)
+
+# --- Urutkan dan ambil 10 teratas ---
+top_categories = category_counts.sort_values(by="total_orders", ascending=False).head(10)
+
+# --- Tampilkan tabel di Streamlit ---
+st.subheader("Top 10 Kategori Produk Terbanyak (Tabel)")
+st.dataframe(top_categories.reset_index(drop=True))
+
+# --- Visualisasi Bar Chart ---
+st.subheader("Visualisasi Top 10 Kategori Produk Terbanyak")
+
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(
+    x="product_category_name",
+    y="total_orders",
+    data=top_categories,
+    palette="viridis",
+    ax=ax
+)
+ax.set_title("Top 10 Kategori Produk Terbanyak (Jumlah Order)")
+ax.set_xlabel("Kategori Produk")
+ax.set_ylabel("Jumlah Order")
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+# --- Tampilkan di Streamlit ---
+st.pyplot(fig)
+
 
 st.title("🗺️ E-Commerce Geolocation & Purchase Analysis Dashboard")
 
@@ -196,114 +306,6 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
-
-def default_plot(ax, spines):
-    ax = plt.gca()
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.get_xaxis().tick_bottom()
-    ax.get_yaxis().tick_left()
-
-    ax.get_yaxis().set_tick_params(direction='out')
-    ax.get_xaxis().set_tick_params(direction='out')
-
-    for loc, spine in ax.spines.items():
-        if loc in spines:
-            spine.set_position(('outward', 10))  # outward by 10 points
-
-    if 'left' in spines:
-        ax.yaxis.set_ticks_position('left')
-    if 'right' in spines:
-        ax.yaxis.set_ticks_position('right')
-    if 'bottom' in spines:
-        ax.xaxis.set_ticks_position('bottom')
-
-    return ax
-
-# --- Contoh data (ganti ini dengan data aslimu) ---
-# Pastikan struktur mirip dengan yang digunakan di kode kamu
-data = {
-    'customer_state': ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC'],
-    'payment_value_mean': [250, 220, 190, 210, 260, 230],
-    'ci_low': [230, 200, 170, 190, 240, 210],
-    'ci_hi': [270, 240, 210, 230, 280, 250]
-}
-customer_regions = pd.DataFrame(data)
-customer_regions = customer_regions.sort_values(by='payment_value_mean')
-
-# --- Plot menggunakan matplotlib ---
-fig, ax = plt.subplots(figsize=(12, 4))
-ax = default_plot(ax, ['left', 'bottom'])
-plt.xticks(rotation=30)
-plt.xlabel('Kota')
-plt.ylabel('Rata-rata Transaksi')
-plt.xlim(-0.5, len(customer_regions) - 0.5)
-plt.ylim(min(customer_regions['ci_low']) - 10, max(customer_regions['ci_hi']) + 10)
-
-# Plot scatter dan error bars
-plt.scatter(
-    customer_regions['customer_state'],
-    customer_regions['payment_value_mean'],
-    s=100,
-    c=customer_regions['payment_value_mean'],
-    cmap='viridis'
-)
-plt.vlines(
-    customer_regions['customer_state'],
-    customer_regions['ci_low'],
-    customer_regions['ci_hi'],
-    lw=0.5,
-    colors='gray'
-)
-plt.tight_layout()
-
-# --- Tampilkan di Streamlit ---
-st.title("Visualisasi Rata-rata Transaksi per Kota")
-st.pyplot(fig)
-
-# --- Judul Halaman ---
-st.title("Top 10 Kategori Produk Terbanyak")
-
-# --- Contoh Data (ganti dengan data aslimu) ---
-data = {
-    "product_category_name": [
-        "eletronicos", "beleza_saude", "moveis_decoracao", "esporte_lazer",
-        "informatica_acessorios", "brinquedos", "telefonia", "relogios_presentes",
-        "perfumaria", "automotivo", "papelaria", "construcao_ferramentas"
-    ],
-    "total_orders": [5200, 4300, 3900, 3700, 3400, 3100, 3000, 2700, 2500, 2300, 2200, 2100]
-}
-
-category_counts = pd.DataFrame(data)
-
-# --- Urutkan dan ambil 10 teratas ---
-top_categories = category_counts.sort_values(by="total_orders", ascending=False).head(10)
-
-# --- Tampilkan tabel di Streamlit ---
-st.subheader("Top 10 Kategori Produk Terbanyak (Tabel)")
-st.dataframe(top_categories.reset_index(drop=True))
-
-# --- Visualisasi Bar Chart ---
-st.subheader("Visualisasi Top 10 Kategori Produk Terbanyak")
-
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.barplot(
-    x="product_category_name",
-    y="total_orders",
-    data=top_categories,
-    palette="viridis",
-    ax=ax
-)
-ax.set_title("Top 10 Kategori Produk Terbanyak (Jumlah Order)")
-ax.set_xlabel("Kategori Produk")
-ax.set_ylabel("Jumlah Order")
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-
-# --- Tampilkan di Streamlit ---
-st.pyplot(fig)
-
-
 
 
 
