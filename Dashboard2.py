@@ -295,7 +295,7 @@ def plot_brazil_map(data):
         color='yellow',
         edgecolor='black',
         linewidth=0.3,
-        zorder=2
+        zorder=5
     )
     ax.set_xlim(-75, -34)
     ax.set_ylim(-34, 6)
@@ -321,6 +321,7 @@ st.download_button(
 )
 
 st.success("✅ Dashboard berhasil dijalankan sepenuhnya!")
+
 
 
 
