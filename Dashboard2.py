@@ -7,7 +7,6 @@ import urllib.request
 import matplotlib.image as mpimg
 
 sns.set(style='dark')
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
 
@@ -309,6 +308,7 @@ else:
     st.info("Silakan upload ketiga file dataset (orders, customers, dan geolocation) untuk memulai analisis.")
 
  
+
 
 
 
