@@ -302,7 +302,8 @@ if orders_file and customers_file and geolocation_file:
 
 else:
     st.info("Silakan upload ketiga file dataset (orders, customers, dan geolocation) untuk memulai analisis.")
-    st.pyplot(fig)
+ 
+
 
 
 
