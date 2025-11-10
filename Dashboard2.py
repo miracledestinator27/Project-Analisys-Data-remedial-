@@ -6,15 +6,15 @@ import streamlit as st
 
 # Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
 
-customers_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\customers_dataset.csv")
-geolocation_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\geolocation_dataset.csv")
-order_items_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\order_items_dataset.csv")
-order_payments_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\order_payments_dataset.csv")
-order_reviews_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\order_reviews_dataset.csv")
-orders_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\orders_dataset.csv")
-category_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\product_category_name_translation.csv")
-product_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\products_dataset.csv")
-sellers_df = pd.read_csv("E-commerce-public-dataset\\E-Commerce Public Dataset\\sellers_dataset.csv")
+customers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/customers_dataset.csv")
+geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
+order_items_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/order_items_dataset.csv")
+order_payments_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/order_payments_dataset.csv")
+order_reviews_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/order_reviews_dataset.csv")
+orders_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/orders_dataset.csv")
+category_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/product_category_name_translation.csv")
+product_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/products_dataset.csv")
+sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/sellers_dataset.csv")
 
 # --- Data Processing ---
 order_items_df['shipping_limit_date'] = pd.to_datetime(order_items_df['shipping_limit_date'])
@@ -38,4 +38,5 @@ monthly_sales_df.sort_values(by=['year', 'month_num'], inplace=True)
 st.header('E-commerce Dashboard')
 
 st.subheader('Monthly Sales Data')
+
 st.dataframe(monthly_sales_df)
