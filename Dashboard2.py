@@ -42,7 +42,7 @@ with st.sidebar:
     with col1:
         st.write(' ')
     with col2:
-        st.image("", width=200)
+        st.image("https://github.com/miracledestinator27/Project-Analisys-Data-remedial-/blob/ac8d1356b74db519d4391f0789c145e70266a324/E-commerce-public-dataset/ultimaps-blank-map-of-brazil-states-labels.png", width=200)
     with col3:
         st.write(' ')
 
@@ -374,6 +374,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
