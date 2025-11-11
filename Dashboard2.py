@@ -34,7 +34,7 @@ monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
 }).reset_index()
 
 # Streamlit header
-st.header('E-commerce Dashboard')
+st.title('E-commerce Dashboard')
 
 
 
@@ -278,7 +278,7 @@ st.dataframe(customers_silver.head(10))
 # ==============================
 # 🗺️ MAP VISUALIZATION (CUSTOMERS)
 # ==============================
-st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
+st.header(Peta Persebaran Pelanggan di Brasil")
 def plot_brazil_map(data):
     # Ambil gambar peta Brasil
     url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
@@ -288,7 +288,7 @@ def plot_brazil_map(data):
     data_lon_min, data_lon_max = data["geolocation_lng"].min(), data["geolocation_lng"].max()
     data_lat_min, data_lat_max = data["geolocation_lat"].min(), data["geolocation_lat"].max()
 
-    # 🗺️ Batas peta dibuat lebih lebar dari data
+    # Batas peta dibuat lebih lebar dari data
     # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
     lon_margin = 47
     lat_margin = 12
@@ -324,7 +324,7 @@ def plot_brazil_map(data):
     # Label dan tampilan
     ax.set_xlabel("Longitude", fontsize=10)
     ax.set_ylabel("Latitude", fontsize=10)
-    ax.set_title("🗺️ Peta Brasil", fontsize=16)
+    ax.set_title("Peta Brasil", fontsize=16)
     ax.grid(False)
     plt.tight_layout()
     return fig
@@ -351,6 +351,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
