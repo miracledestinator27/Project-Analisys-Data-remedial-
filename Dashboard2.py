@@ -294,7 +294,7 @@ def plot_brazil_map(data):
         alpha=0.8,
         color='yellow',
         edgecolor='black',
-        linewidth=0.8,
+        linewidth=3,
         zorder=2
     )
     ax.set_xlim(-73.98283055, -33.8)
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
