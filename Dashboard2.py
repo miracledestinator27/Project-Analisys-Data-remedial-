@@ -99,11 +99,11 @@ plt.vlines(
 plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
-st.header("Visualisasi Rata-rata Transaksi per Kota")
+st.header("1. Visualisasi Rata-rata Transaksi per Kota")
 st.pyplot(fig)
 
 # --- Judul Halaman ---
-st.header("Visualisasi Top 10 Kategori Produk Terbanyak")
+st.header("2. Visualisasi Top 10 Kategori Produk Terbanyak")
 
 # --- Contoh Data (ganti dengan data aslimu) ---
 data = {
@@ -121,7 +121,7 @@ category_counts = pd.DataFrame(data)
 top_categories = category_counts.sort_values(by="total_orders", ascending=False).head(10)
 
 # --- Tampilkan tabel di Streamlit ---
-st.subheader("Top 10 Kategori Produk Terbanyak (Tabel)")
+st.subheader("Tabel")
 st.dataframe(top_categories.reset_index(drop=True))
 
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -142,7 +142,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-st.title("E-Commerce Geolocation & Purchase Analysis Dashboard")
+st.header("E-Commerce Geolocation & Purchase Analysis Dashboard")
 
 st.markdown("""
 Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
@@ -202,7 +202,7 @@ with col2:
 # ==============================
 # MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
 # ==============================
-st.header("Penggabungan Data Orders, Customers, dan Geolocation")
+st.subheader("Penggabungan Data Orders, Customers, dan Geolocation")
 
 orders_customers_geolocation_df = (
     orders_df
@@ -220,7 +220,7 @@ st.dataframe(orders_customers_geolocation_df.head())
 # ==============================
 # PURCHASES BY STATE
 # ==============================
-st.header("Jumlah Pembelian per State")
+st.subheader("Jumlah Pembelian per State")
 
 purchases_by_state = (
     orders_customers_geolocation_df
@@ -241,7 +241,7 @@ with col3:
 with col4:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
-    ax.set_title("Jumlah Pembelian per State")
+    ax.set_header("Jumlah Pembelian per State")
     ax.set_xlabel("State")
     ax.set_ylabel("Total Orders")
     st.pyplot(fig)
@@ -249,7 +249,7 @@ with col4:
 # ==============================
 # CUSTOMERS SILVER & GEOLOCATION SILVER
 # ==============================
-st.header("Customers Silver Dataset")
+st.subheader("Customers Silver Dataset")
 
 customers_silver = customers_df.merge(
     geolocation_df,
@@ -275,7 +275,7 @@ st.dataframe(customers_silver.head(10))
 # ==============================
 # 🗺️ MAP VISUALIZATION (CUSTOMERS)
 # ==============================
-st.header("Peta Persebaran Pelanggan di Brasil")
+st.subheader("Peta Persebaran Pelanggan di Brasil")
 def plot_brazil_map(data):
     # Ambil gambar peta Brasil
     url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
@@ -338,7 +338,7 @@ customers_silver = pd.DataFrame({
 # =====================================
 # Streamlit Layout
 # =====================================
-st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
+st.set_page_config(page_header="Peta Pelanggan Brasil", layout="wide")
 st.markdown("""
 Berikut visualisasi peta Brasil dan pesebaran pelanggannya.
 """)
@@ -348,6 +348,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
