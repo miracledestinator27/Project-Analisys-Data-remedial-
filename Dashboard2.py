@@ -280,69 +280,80 @@ st.dataframe(customers_silver.head(10))
 # ==============================
 st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
 def plot_brazil_map(data):
-    # URL gambar peta Brasil dengan resolusi tinggi dan orientasi geografis benar
+    # Ambil gambar peta Brasil
     url = 'https://i.pinimg.com/originals/3a/0c/e1/3a0ce18b3c842748c255bc0aa445ad41.jpg'
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
-    # Batas geografis Brasil sebenarnya (long-lat)
-    # Longitude (x) ≈ -74 (barat) sampai -34 (timur)
-    # Latitude (y) ≈ -33 (selatan) sampai +5 (utara)
-    lon_min, lon_max = -74, -34
-    lat_min, lat_max = -33.75, 5.4
+    # 🧭 Batas koordinat data pelanggan (scatter)
+    data_lon_min, data_lon_max = data["geolocation_lng"].min(), data["geolocation_lng"].max()
+    data_lat_min, data_lat_max = data["geolocation_lat"].min(), data["geolocation_lat"].max()
 
-    # Membuat plot
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.imshow(brazil, extent=[lon_min, lon_max, lat_min, lat_max], zorder=1)
-    
-    # Scatter pelanggan
+    # 🗺️ Batas peta dibuat lebih lebar dari data
+    # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
+    lon_margin = 5
+    lat_margin = 3
+
+    map_lon_min = data_lon_min - lon_margin
+    map_lon_max = data_lon_max + lon_margin
+    map_lat_min = data_lat_min - lat_margin
+    map_lat_max = data_lat_max + lat_margin
+
+    # Buat plot
+    fig, ax = plt.subplots(figsize=(14, 7))  # lebar 2x tinggi
+    ax.imshow(brazil, extent=[map_lon_min, map_lon_max, map_lat_min, map_lat_max], zorder=1)
+
+    # Scatter pelanggan hanya di area data aslinya
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=30,                 # ukuran titik proporsional
-        alpha=0.7,
+        s=50,
+        alpha=0.8,
         color='yellow',
         edgecolor='black',
-        linewidth=0.4,
+        linewidth=0.5,
         zorder=2
     )
 
-    # Mengunci area koordinat sesuai dengan extent peta
-    ax.set_xlim(lon_min, lon_max)
-    ax.set_ylim(lat_min, lat_max)
-    
-    # Menjaga rasio aspek 1:1 agar tidak terjadi distorsi
-    ax.set_aspect('equal', adjustable='box')
+    # Atur batas tampilan (fokus ke area data saja)
+    ax.set_xlim(map_lon_min, map_lon_max)
+    ax.set_ylim(map_lat_min, map_lat_max)
+
+    # Rasio aspek disesuaikan agar proporsional (lebih lebar)
+    ax.set_aspect(0.4, adjustable='box')
 
     # Label dan tampilan
     ax.set_xlabel("Longitude", fontsize=10)
     ax.set_ylabel("Latitude", fontsize=10)
-    ax.set_title("🗺️ Sebaran Pelanggan di Brasil", fontsize=16)
+    ax.set_title("🗺️ Peta Brasil (Latar Lebih Lebar dari Scatter)", fontsize=16)
     ax.grid(False)
     plt.tight_layout()
     return fig
 
 
+# =====================================
+# 🔹 Contoh Data Dummy
+# =====================================
 np.random.seed(42)
 customers_silver = pd.DataFrame({
     'customer_unique_id': [f'U{i}' for i in range(150)],
-    'geolocation_lat': np.random.uniform(-33.5, 5, 150),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5, 150)
+    'geolocation_lat': np.random.uniform(-25, 2, 150),
+    'geolocation_lng': np.random.uniform(-65, -40, 150)
 })
 
 # =====================================
-# 🔹 Tampilkan di Streamlit
+# 📊 Streamlit Layout
 # =====================================
 st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
-st.title("🗺️ Visualisasi Persebaran Pelanggan di Brasil")
-
+st.title("🗺️ Visualisasi Peta Lebih Lebar dari Scatter")
 st.markdown("""
-Peta berikut memperlihatkan **distribusi pelanggan berdasarkan koordinat latitude dan longitude**,  
-dengan **skala peta dan scatter** yang telah disesuaikan secara geografis.
+Berikut visualisasi peta Brasil di mana **gambar peta dibuat lebih lebar dari area sebaran titik pelanggan**.  
+Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekitar data.
 """)
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
