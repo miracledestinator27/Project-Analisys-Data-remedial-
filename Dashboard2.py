@@ -334,11 +334,11 @@ def plot_brazil_map(data):
 # =====================================
 # 🔹 Contoh Data Dummy
 # =====================================
-np.random.seed(999)
+np.random.seed(42)
 customers_silver = pd.DataFrame({
-    'customer_unique_id': [f'U{i}' for i in range(200)],
-    'geolocation_lat': np.random.uniform(-33.5, 5, 200),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5,200)
+    'customer_unique_id': [f'U{i}' for i in range(100)],
+    'geolocation_lat': np.random.uniform(-33.5, 5, 100),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5,100)
 })
 
 # =====================================
@@ -354,6 +354,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
