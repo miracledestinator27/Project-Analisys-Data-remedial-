@@ -20,38 +20,138 @@ category_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/p
 product_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/products_dataset.csv")
 sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/sellers_dataset.csv")
 
-# --- Data Processing ---
-order_items_df['shipping_limit_date'] = pd.to_datetime(order_items_df['shipping_limit_date'])
-order_items_df['month'] = order_items_df['shipping_limit_date'].dt.strftime('%B')
-order_items_df['year'] = order_items_df['shipping_limit_date'].dt.year
-order_items_df['month_num'] = order_items_df['shipping_limit_date'].dt.month
 
-# Geolocation dataset
-geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
-data = geolocation_df.drop_duplicates(subset='customer_unique_id')
+# ===============================
+# 📦 LOAD DATA
+# ===============================
+@st.cache_data
+def load_data():
+    geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
 
-for col in datetime_cols:
-    all_data[col] = pd.to_datetime(all_data[col])
+    # Jika dataset kamu sudah merge dari sebelumnya (ada order_approved_at, dll)
+    # pastikan kolom waktu diubah ke datetime
+    datetime_cols = [col for col in geolocation_df.columns if "date" in col or "at" in col]
+    for col in datetime_cols:
+        geolocation_df[col] = pd.to_datetime(geolocation_df[col], errors='coerce')
 
-min_date = all_data["order_approved_at"].min()
-max_date = all_data["order_approved_at"].max()
+    # Drop duplikat pelanggan
+    data = geolocation_df.drop_duplicates(subset='customer_unique_id', keep='first')
+    return data
 
-# sidebar
+data = load_data()
+
+# ===============================
+# 🗓️ DATE FILTER SETUP
+# ===============================
+if "order_approved_at" in data.columns:
+    min_date = data["order_approved_at"].min()
+    max_date = data["order_approved_at"].max()
+else:
+    # Jika kolom tanggal tidak tersedia, gunakan placeholder
+    min_date = pd.Timestamp("2016-01-01")
+    max_date = pd.Timestamp("2018-12-31")
+
+# ===============================
+# 🎨 SIDEBAR DASHBOARD
+# ===============================
 with st.sidebar:
+    # Gambar logo atau peta kecil di tengah
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.write(' ')
+        st.write("")
     with col2:
-        st.image("https://github.com/miracledestinator27/Project-Analisys-Data-remedial-/blob/ac8d1356b74db519d4391f0789c145e70266a324/E-commerce-public-dataset/ultimaps-blank-map-of-brazil-states-labels.png", width=200)
+        st.image(
+            "https://github.com/miracledestinator27/Project-Analisys-Data-remedial-/blob/ac8d1356b74db519d4391f0789c145e70266a324/E-commerce-public-dataset/ultimaps-blank-map-of-brazil-states-labels.png?raw=true",
+            width=180
+        )
     with col3:
-        st.write(' ')
+        st.write("")
 
-    # Date Range
+    # Filter tanggal
+    st.markdown("### 📅 Filter Tanggal")
     start_date, end_date = st.date_input(
-        label="Select Date Range",
+        label="Pilih Rentang Waktu",
         value=[min_date, max_date],
         min_value=min_date,
         max_value=max_date
+    )
+
+# ===============================
+# 🔍 FILTER DATA BERDASARKAN TANGGAL
+# ===============================
+if "order_approved_at" in data.columns:
+    mask = (data["order_approved_at"] >= pd.to_datetime(start_date)) & (data["order_approved_at"] <= pd.to_datetime(end_date))
+    filtered_data = data.loc[mask]
+else:
+    filtered_data = data
+
+# ===============================
+# 🗺️ FUNGSI PETA
+# ===============================
+def plot_brazil_map(data, show_box=True):
+    url = 'https://i.pinimg.com/originals/3a/0c/e1/3a0ce18b3c842748c255bc0aa445ad41.jpg'
+    with urllib.request.urlopen(url) as u:
+        brazil = mpimg.imread(u, 'jpg')
+
+    lon_min, lon_max = data["geolocation_lng"].min(), data["geolocation_lng"].max()
+    lat_min, lat_max = data["geolocation_lat"].min(), data["geolocation_lat"].max()
+    lon_margin, lat_margin = 5, 3
+
+    fig, ax = plt.subplots(figsize=(14, 7))
+    ax.imshow(brazil, extent=[lon_min - lon_margin, lon_max + lon_margin, lat_min - lat_margin, lat_max + lat_margin], zorder=1)
+
+    # Scatter titik pelanggan
+    ax.scatter(
+        data["geolocation_lng"],
+        data["geolocation_lat"],
+        s=50,
+        alpha=0.8,
+        color='yellow',
+        edgecolor='black',
+        linewidth=0.5,
+        zorder=2
+    )
+
+    # Tambahkan kotak area persebaran
+    if show_box:
+        rect = patches.Rectangle(
+            (lon_min, lat_min),
+            lon_max - lon_min,
+            lat_max - lat_min,
+            linewidth=2,
+            edgecolor='red',
+            facecolor='none',
+            linestyle='--',
+            zorder=3
+        )
+        ax.add_patch(rect)
+        ax.text(lon_min, lat_max + 0.5, "Area Scatter", color='red', fontsize=10, weight='bold')
+
+    ax.set_xlim(lon_min - lon_margin, lon_max + lon_margin)
+    ax.set_ylim(lat_min - lat_margin, lat_max + lat_margin)
+    ax.set_aspect(0.5, adjustable='box')
+    ax.set_xlabel("Longitude", fontsize=10)
+    ax.set_ylabel("Latitude", fontsize=10)
+    ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
+    plt.tight_layout()
+    return fig
+
+# ===============================
+# 🎯 DASHBOARD UTAMA
+# ===============================
+st.set_page_config(page_title="E-Commerce Dashboard", layout="wide")
+
+st.title("🇧🇷 Dashboard Sebaran Pelanggan E-Commerce Brasil")
+st.markdown("Gunakan sidebar untuk memilih rentang waktu dan melihat distribusi pelanggan berdasarkan lokasi geografis.")
+
+st.markdown("---")
+st.subheader("🗺️ Peta Sebaran Pelanggan")
+fig_map = plot_brazil_map(filtered_data, show_box=True)
+st.pyplot(fig_map)
+
+st.markdown("---")
+st.subheader("📋 Data Pelanggan (Sample)")
+st.dataframe(filtered_data.head(10))
     )
 
 # Streamlit header
@@ -374,6 +474,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
