@@ -300,8 +300,8 @@ def plot_brazil_map(data):
     map_lat_max = data_lat_max + lat_margin
 
     # Buat plot
-    fig, ax = plt.subplots(figsize=(32, 7))  
-    ax.imshow(brazil, extent=[-86.98283055, -21.8,-23.75116944,10], zorder=1)
+    fig, ax = plt.subplots(figsize=(10, 10))  
+    ax.imshow(brazil, extent=[-75, -34, -34, 6], zorder=1)
 
     # Scatter pelanggan hanya di area data aslinya
     ax.scatter(
@@ -353,6 +353,7 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
