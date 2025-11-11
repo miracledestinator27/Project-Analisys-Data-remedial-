@@ -291,7 +291,7 @@ def plot_brazil_map(data):
 
     # 🗺️ Batas peta dibuat lebih lebar dari data
     # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
-    lon_margin = 5
+    lon_margin = 25
     lat_margin = 10
 
     map_lon_min = data_lon_min - lon_margin
@@ -320,7 +320,7 @@ def plot_brazil_map(data):
     ax.set_ylim(map_lat_min, map_lat_max)
 
     # Rasio aspek disesuaikan agar proporsional (lebih lebar)
-    ax.set_aspect(0.8, adjustable='box')
+    ax.set_aspect(0.4, adjustable='box')
 
     # Label dan tampilan
     ax.set_xlabel("Longitude", fontsize=10)
@@ -353,6 +353,7 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
