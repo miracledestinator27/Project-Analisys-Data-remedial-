@@ -278,7 +278,7 @@ st.dataframe(customers_silver.head(10))
 # ==============================
 # 🗺️ MAP VISUALIZATION (CUSTOMERS)
 # ==============================
-st.header(Peta Persebaran Pelanggan di Brasil")
+st.header("Peta Persebaran Pelanggan di Brasil")
 def plot_brazil_map(data):
     # Ambil gambar peta Brasil
     url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
@@ -351,6 +351,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
