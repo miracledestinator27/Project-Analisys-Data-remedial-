@@ -158,8 +158,8 @@ geolocation_df = pd.DataFrame({
     'geolocation_zip_code_prefix': np.random.randint(10000, 99999, 100),
     'geolocation_city': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
     'geolocation_state': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
-    'geolocation_lat': np.random.uniform(-33.75116944,5.4, 100),
-    'geolocation_lng': np.random.uniform(-73.98283055, -33.8, 100)
+    'geolocation_lat': np.random.uniform(-33.5, 5, 150),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5, 150)
 })
 customers_df = pd.DataFrame({
     'customer_id': [f"C{i}" for i in range(1, 51)],
@@ -286,13 +286,13 @@ def plot_brazil_map(data):
         brazil = mpimg.imread(u, 'jpg')
 
     # Batas geografis Brasil sebenarnya (long-lat)
-    # Longitude (x) ≈ -64 (barat) sampai -24 (timur)
-    # Latitude (y) ≈ -23 (selatan) sampai +4 (utara)
-    lon_min, lon_max = -64, -24
-    lat_min, lat_max = -23.75, 4.4
+    # Longitude (x) ≈ -74 (barat) sampai -34 (timur)
+    # Latitude (y) ≈ -33 (selatan) sampai +5 (utara)
+    lon_min, lon_max = -74, -34
+    lat_min, lat_max = -33.75, 5.4
 
     # Membuat plot
-    fig, ax = plt.subplots(figsize=(10, 10))
+    fig, ax = plt.subplots(figsize=(12, 6))
     ax.imshow(brazil, extent=[lon_min, lon_max, lat_min, lat_max], zorder=1)
     
     # Scatter pelanggan
@@ -323,17 +323,11 @@ def plot_brazil_map(data):
     return fig
 
 
-# =====================================
-# 🧭 Contoh Penggunaan
-# =====================================
-# Contoh data dummy agar bisa langsung dijalankan
-import pandas as pd
-import numpy as np
 np.random.seed(42)
 customers_silver = pd.DataFrame({
-    'customer_unique_id': [f'U{i}' for i in range(100)],
-    'geolocation_lat': np.random.uniform(-23.5, 4, 100),
-    'geolocation_lng': np.random.uniform(-63.8, -24.5, 100)
+    'customer_unique_id': [f'U{i}' for i in range(150)],
+    'geolocation_lat': np.random.uniform(-33.5, 5, 150),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5, 150)
 })
 
 # =====================================
@@ -349,6 +343,7 @@ dengan **skala peta dan scatter** yang telah disesuaikan secara geografis.
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
