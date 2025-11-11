@@ -197,7 +197,7 @@ with col2:
         .drop('count', axis=1)
     )
     st.write("**State representatif per kode pos:**")
-    st.dataframe(min_state.head(10))
+    st.dataframe(min_state.head(11))
 
 # ==============================
 # MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
@@ -235,12 +235,12 @@ col3, col4 = st.columns(2)
 
 with col3:
     st.subheader("State dengan Pembelian Paling Sedikit")
-    st.dataframe(locations_fewest_purchases.head(10))
+    st.dataframe(locations_fewest_purchases.head(11))
 
 with col4:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
-    ax.set_title("Jumlah Pembelian per State")
+    ax.set_title("Jumlah Pembelian per State",fontsize=16)
     ax.set_xlabel("State")
     ax.set_ylabel("Total Orders")
     st.pyplot(fig)
@@ -269,7 +269,7 @@ geolocation_silver = geolocation_silver.merge(
     how='inner'
 )
 
-st.dataframe(customers_silver.head(10))
+st.dataframe(customers_silver.head(6))
 
 # ==============================
 # 🗺️ MAP VISUALIZATION (CUSTOMERS)
@@ -347,6 +347,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
