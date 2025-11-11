@@ -292,7 +292,7 @@ def plot_brazil_map(data):
     # 🗺️ Batas peta dibuat lebih lebar dari data
     # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
     lon_margin = 10
-    lat_margin = 8
+    lat_margin = 5
 
     map_lon_min = data_lon_min - lon_margin
     map_lon_max = data_lon_max + lon_margin
@@ -300,14 +300,14 @@ def plot_brazil_map(data):
     map_lat_max = data_lat_max + lat_margin
 
     # Buat plot
-    fig, ax = plt.subplots(figsize=(10, 5))  
+    fig, ax = plt.subplots(figsize=(10, 3))  
     ax.imshow(brazil, extent=[map_lon_min, map_lon_max, map_lat_min, map_lat_max], zorder=1)
 
     # Scatter pelanggan hanya di area data aslinya
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=50,
+        s=20,
         alpha=0.8,
         color='yellow',
         edgecolor='black',
@@ -336,9 +336,9 @@ def plot_brazil_map(data):
 # =====================================
 np.random.seed(42)
 customers_silver = pd.DataFrame({
-    'customer_unique_id': [f'U{i}' for i in range(100)],
-    'geolocation_lat': np.random.uniform(-33, 5, 100),
-    'geolocation_lng': np.random.uniform(-73, -33, 100)
+    'customer_unique_id': [f'U{i}' for i in range(150)],
+    'geolocation_lat': np.random.uniform(-33, 5, 150),
+    'geolocation_lng': np.random.uniform(-73, -33, 150)
 })
 
 # =====================================
@@ -353,6 +353,7 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
