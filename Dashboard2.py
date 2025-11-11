@@ -220,7 +220,6 @@ st.dataframe(orders_customers_geolocation_df.head())
 # ==============================
 # PURCHASES BY STATE
 # ==============================
-st.subheader("Jumlah Pembelian per State")
 
 purchases_by_state = (
     orders_customers_geolocation_df
@@ -348,6 +347,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
