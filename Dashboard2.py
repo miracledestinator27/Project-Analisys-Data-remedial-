@@ -297,15 +297,25 @@ def plot_brazil_map(data):
         linewidth=0.5,
         zorder=2
     )
-    ax.set_xlim(-73.98283055, -33.8)
-    ax.set_ylim(-33.75116944,5.4)
-    ax.axis('on')
-    ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
+
+    # Mengunci area koordinat sesuai dengan extent peta
+    ax.set_xlim(lon_min, lon_max)
+    ax.set_ylim(lat_min, lat_max)
+    
+    # Menjaga rasio aspek 1:1 agar tidak terjadi distorsi
+    ax.set_aspect('equal', adjustable='box')
+
+    # Label dan tampilan
+    ax.set_xlabel("Longitude", fontsize=10)
+    ax.set_ylabel("Latitude", fontsize=10)
+    ax.set_title("🗺️ Sebaran Pelanggan di Brasil", fontsize=16)
+    ax.grid(False)
     plt.tight_layout()
     return fig
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
