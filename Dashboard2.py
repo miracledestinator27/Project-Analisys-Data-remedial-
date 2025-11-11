@@ -142,7 +142,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-st.header("E-Commerce Geolocation & Purchase Analysis Dashboard")
+st.header("3. E-Commerce Geolocation & Purchase Analysis Dashboard")
 
 st.markdown("""
 Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
@@ -241,7 +241,7 @@ with col3:
 with col4:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
-    ax.set_header("Jumlah Pembelian per State")
+    ax.set_title("Jumlah Pembelian per State")
     ax.set_xlabel("State")
     ax.set_ylabel("Total Orders")
     st.pyplot(fig)
@@ -348,6 +348,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
