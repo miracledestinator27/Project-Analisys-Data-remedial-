@@ -338,7 +338,7 @@ customers_silver = pd.DataFrame({
 # =====================================
 # Streamlit Layout
 # =====================================
-st.set_page_config(page_header="Peta Pelanggan Brasil", layout="wide")
+st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
 st.markdown("""
 Berikut visualisasi peta Brasil dan pesebaran pelanggannya.
 """)
@@ -348,6 +348,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
