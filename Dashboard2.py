@@ -286,7 +286,7 @@ def plot_brazil_map(data):
         brazil = mpimg.imread(u, 'jpg')
 
     fig, ax = plt.subplots(figsize=(10, 10))
-    ax.imshow(brazil, extent=[-73.98283055, -33.8,-33.75116944,5.4], zorder=1)
+    ax.imshow(brazil, extent=[-146.98283055, -66.8,-66.75116944,10.8], zorder=1)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
