@@ -26,12 +26,33 @@ order_items_df['month'] = order_items_df['shipping_limit_date'].dt.strftime('%B'
 order_items_df['year'] = order_items_df['shipping_limit_date'].dt.year
 order_items_df['month_num'] = order_items_df['shipping_limit_date'].dt.month
 
-# Mengelompokkan data berdasarkan tahun, bulan, dan menghitung total penjualan per bulan
-monthly_sales_df = order_items_df.groupby(['year', 'month_num', 'month']).agg({
-    "price": "sum",
-    "freight_value": "sum",
-    "order_id": "nunique"  # Menghitung jumlah order unik
-}).reset_index()
+# Geolocation dataset
+geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
+data = geolocation_df.drop_duplicates(subset='customer_unique_id')
+
+for col in datetime_cols:
+    all_data[col] = pd.to_datetime(all_data[col])
+
+min_date = all_data["order_approved_at"].min()
+max_date = all_data["order_approved_at"].max()
+
+# sidebar
+with st.sidebar:
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.write(' ')
+    with col2:
+        st.image("", width=200)
+    with col3:
+        st.write(' ')
+
+    # Date Range
+    start_date, end_date = st.date_input(
+        label="Select Date Range",
+        value=[min_date, max_date],
+        min_value=min_date,
+        max_value=max_date
+    )
 
 # Streamlit header
 st.title('E-commerce Dashboard')
