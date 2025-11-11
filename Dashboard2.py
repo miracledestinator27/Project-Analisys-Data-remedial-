@@ -281,12 +281,12 @@ st.dataframe(customers_silver.head(10))
 st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
 
 def plot_brazil_map(data):
-    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
+    url = 'https://i.pinimg.com/originals/3a/0c/e1/3a0ce18b3c842748c255bc0aa445ad41.jpg'
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
     fig, ax = plt.subplots(figsize=(14, 14))
-    ax.imshow(brazil, extent=[-150, -68, -68, 6], zorder=8)
+    ax.imshow(brazil, extent=[-73.98283055, -33.8,-33.75116944,5.4], zorder=8)
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
@@ -297,7 +297,7 @@ def plot_brazil_map(data):
         linewidth=0.3,
         zorder=50
     )
-    ax.set_xlim(-78.98283055, -25.8)
+    ax.set_xlim(-73.98283055, -33.8)
     ax.set_ylim(-33.75116944, 5.4)
     ax.axis('on')
     ax.set_title("Sebaran Pelanggan di Brasil", fontsize=16)
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
