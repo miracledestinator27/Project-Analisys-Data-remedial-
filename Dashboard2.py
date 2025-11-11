@@ -337,8 +337,8 @@ def plot_brazil_map(data):
 np.random.seed(150)
 customers_silver = pd.DataFrame({
     'customer_unique_id': [f'U{i}' for i in range(50)],
-    'geolocation_lat': np.random.uniform(-32, 38, 50),
-    'geolocation_lng': np.random.uniform(-53, -18,50)
+    'geolocation_lat': np.random.uniform(-42, 38, 50),
+    'geolocation_lng': np.random.uniform(-53, -9,50)
 })
 
 # =====================================
@@ -353,6 +353,7 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
