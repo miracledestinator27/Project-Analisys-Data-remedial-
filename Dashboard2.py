@@ -291,7 +291,7 @@ def plot_brazil_map(data):
 
     # 🗺️ Batas peta dibuat lebih lebar dari data
     # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
-    lon_margin = 16
+    lon_margin = 32
     lat_margin = 12
 
     map_lon_min = data_lon_min - lon_margin
@@ -354,6 +354,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
