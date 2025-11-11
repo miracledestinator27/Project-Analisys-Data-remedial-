@@ -152,7 +152,7 @@ st.pyplot(fig_map)
 st.markdown("---")
 st.subheader("📋 Data Pelanggan (Sample)")
 st.dataframe(filtered_data.head(10))
-    )
+    
 
 # Streamlit header
 st.title('E-commerce Dashboard')
@@ -474,6 +474,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
