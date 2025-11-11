@@ -158,8 +158,8 @@ geolocation_df = pd.DataFrame({
     'geolocation_zip_code_prefix': np.random.randint(10000, 99999, 100),
     'geolocation_city': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
     'geolocation_state': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
-    'geolocation_lat': np.random.uniform(-33.75116944, 5.4, 100),
-    'geolocation_lng': np.random.uniform(-78.98283055, -25.8, 100)
+    'geolocation_lat': np.random.uniform(16.87558472, 2.7, 100),
+    'geolocation_lng': np.random.uniform(-36.991415275, 16.9, 100)
 })
 customers_df = pd.DataFrame({
     'customer_id': [f"C{i}" for i in range(1, 51)],
@@ -306,6 +306,7 @@ def plot_brazil_map(data):
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
