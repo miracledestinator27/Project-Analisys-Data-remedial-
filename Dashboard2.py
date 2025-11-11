@@ -286,10 +286,10 @@ def plot_brazil_map(data):
         brazil = mpimg.imread(u, 'jpg')
 
     # Batas geografis Brasil sebenarnya (long-lat)
-    # Longitude (x) ≈ -74 (barat) sampai -34 (timur)
-    # Latitude (y) ≈ -33 (selatan) sampai +5 (utara)
-    lon_min, lon_max = -74, -34
-    lat_min, lat_max = -33.75, 5.4
+    # Longitude (x) ≈ -64 (barat) sampai -24 (timur)
+    # Latitude (y) ≈ -23 (selatan) sampai +4 (utara)
+    lon_min, lon_max = -64, -24
+    lat_min, lat_max = -23.75, 4.4
 
     # Membuat plot
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -332,8 +332,8 @@ import numpy as np
 np.random.seed(42)
 customers_silver = pd.DataFrame({
     'customer_unique_id': [f'U{i}' for i in range(100)],
-    'geolocation_lat': np.random.uniform(-33.5, 5, 100),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5, 100)
+    'geolocation_lat': np.random.uniform(-23.5, 4, 100),
+    'geolocation_lng': np.random.uniform(-63.8, -24.5, 100)
 })
 
 # =====================================
@@ -349,6 +349,7 @@ dengan **skala peta dan scatter** yang telah disesuaikan secara geografis.
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
