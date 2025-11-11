@@ -337,15 +337,15 @@ def plot_brazil_map(data):
 np.random.seed(9999)
 customers_silver = pd.DataFrame({
     'customer_unique_id': [f'U{i}' for i in range(200)],
-    'geolocation_lat': np.random.uniform(-33, 5.4, 200),
-    'geolocation_lng': np.random.uniform(-73, -28,200)
+    'geolocation_lat': np.random.uniform(-33.5, 5, 200),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5,200)
 })
 
 # =====================================
 # 📊 Streamlit Layout
 # =====================================
 st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
-st.title("🗺️ Visualisasi Peta Lebih Lebar dari Scatter")
+st.title("🗺️ Visualisasi Pesebaran Pelanggan di Seluruh Brazil")
 st.markdown("""
 Berikut visualisasi peta Brasil di mana **gambar peta dibuat lebih lebar dari area sebaran titik pelanggan**.  
 Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekitar data.
@@ -354,6 +354,8 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
 
+
+st.caption('Copyright (C) Mira Destiyanti 2025')
 
 
 
