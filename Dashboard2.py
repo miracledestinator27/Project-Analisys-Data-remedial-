@@ -21,24 +21,6 @@ product_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/pr
 sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/sellers_dataset.csv")
 
 
-# ===============================
-# 📦 LOAD DATA
-# ===============================
-@st.cache_data
-def load_data():
-    geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
-
-    # Jika dataset kamu sudah merge dari sebelumnya (ada order_approved_at, dll)
-    # pastikan kolom waktu diubah ke datetime
-    datetime_cols = [col for col in geolocation_df.columns if "date" in col or "at" in col]
-    for col in datetime_cols:
-        geolocation_df[col] = pd.to_datetime(geolocation_df[col], errors='coerce')
-
-    # Drop duplikat pelanggan
-    data = geolocation_df.drop_duplicates(subset='customer_unique_id', keep='first')
-    return data
-
-data = load_data()
 
 # ===============================
 # 🗓️ DATE FILTER SETUP
@@ -474,6 +456,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
