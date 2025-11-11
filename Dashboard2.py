@@ -279,22 +279,31 @@ st.dataframe(customers_silver.head(10))
 # 🗺️ MAP VISUALIZATION (CUSTOMERS)
 # ==============================
 st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
-
 def plot_brazil_map(data):
+    # URL gambar peta Brasil dengan resolusi tinggi dan orientasi geografis benar
     url = 'https://i.pinimg.com/originals/3a/0c/e1/3a0ce18b3c842748c255bc0aa445ad41.jpg'
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
+    # Batas geografis Brasil sebenarnya (long-lat)
+    # Longitude (x) ≈ -74 (barat) sampai -34 (timur)
+    # Latitude (y) ≈ -33 (selatan) sampai +5 (utara)
+    lon_min, lon_max = -74, -34
+    lat_min, lat_max = -33.75, 5.4
+
+    # Membuat plot
     fig, ax = plt.subplots(figsize=(10, 10))
-    ax.imshow(brazil, extent=[-73.98283055, -33.8,-33.75116944,5.4], zorder=1)
+    ax.imshow(brazil, extent=[lon_min, lon_max, lat_min, lat_max], zorder=1)
+    
+    # Scatter pelanggan
     ax.scatter(
         data["geolocation_lng"],
         data["geolocation_lat"],
-        s=50,
-        alpha=0.8,
+        s=30,                 # ukuran titik proporsional
+        alpha=0.7,
         color='yellow',
         edgecolor='black',
-        linewidth=0.5,
+        linewidth=0.4,
         zorder=2
     )
 
@@ -313,8 +322,34 @@ def plot_brazil_map(data):
     plt.tight_layout()
     return fig
 
+
+# =====================================
+# 🧭 Contoh Penggunaan
+# =====================================
+# Contoh data dummy agar bisa langsung dijalankan
+import pandas as pd
+import numpy as np
+np.random.seed(42)
+customers_silver = pd.DataFrame({
+    'customer_unique_id': [f'U{i}' for i in range(100)],
+    'geolocation_lat': np.random.uniform(-33.5, 5, 100),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5, 100)
+})
+
+# =====================================
+# 🔹 Tampilkan di Streamlit
+# =====================================
+st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
+st.title("🗺️ Visualisasi Persebaran Pelanggan di Brasil")
+
+st.markdown("""
+Peta berikut memperlihatkan **distribusi pelanggan berdasarkan koordinat latitude dan longitude**,  
+dengan **skala peta dan scatter** yang telah disesuaikan secara geografis.
+""")
+
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
