@@ -320,7 +320,7 @@ def plot_brazil_map(data):
     ax.set_ylim(map_lat_min, map_lat_max)
 
     # Rasio aspek disesuaikan agar proporsional (lebih lebar)
-    ax.set_aspect(0.6, adjustable='datalim')
+    ax.set_aspect(2, adjustable='box')
 
     # Label dan tampilan
     ax.set_xlabel("Longitude", fontsize=10)
@@ -353,6 +353,7 @@ Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekita
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
 st.pyplot(fig_map)
+
 
 
 
