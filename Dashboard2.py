@@ -285,7 +285,6 @@ def plot_brazil_map(data):
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
-    # 🧭 Batas koordinat data pelanggan (scatter)
     data_lon_min, data_lon_max = data["geolocation_lng"].min(), data["geolocation_lng"].max()
     data_lat_min, data_lat_max = data["geolocation_lat"].min(), data["geolocation_lat"].max()
 
@@ -331,14 +330,12 @@ def plot_brazil_map(data):
     return fig
 
 
-# =====================================
-# 🔹 Contoh Data Dummy
-# =====================================
-np.random.seed(42)
+
+np.random.seed(99)
 customers_silver = pd.DataFrame({
-    'customer_unique_id': [f'U{i}' for i in range(100)],
-    'geolocation_lat': np.random.uniform(-33.5, 5, 100),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5,100)
+    'customer_unique_id': [f'U{i}' for i in range(50)],
+    'geolocation_lat': np.random.uniform(-33.5, 5, 50),
+    'geolocation_lng': np.random.uniform(-73.8, -34.5,50)
 })
 
 # =====================================
@@ -354,6 +351,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
