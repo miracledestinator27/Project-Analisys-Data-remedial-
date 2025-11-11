@@ -99,11 +99,11 @@ plt.vlines(
 plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
-st.title("Visualisasi Rata-rata Transaksi per Kota")
+st.header("Visualisasi Rata-rata Transaksi per Kota")
 st.pyplot(fig)
 
 # --- Judul Halaman ---
-st.title("Top 10 Kategori Produk Terbanyak")
+st.header("Visualisasi Top 10 Kategori Produk Terbanyak")
 
 # --- Contoh Data (ganti dengan data aslimu) ---
 data = {
@@ -123,9 +123,6 @@ top_categories = category_counts.sort_values(by="total_orders", ascending=False)
 # --- Tampilkan tabel di Streamlit ---
 st.subheader("Top 10 Kategori Produk Terbanyak (Tabel)")
 st.dataframe(top_categories.reset_index(drop=True))
-
-# --- Visualisasi Bar Chart ---
-st.subheader("Visualisasi Top 10 Kategori Produk Terbanyak")
 
 fig, ax = plt.subplots(figsize=(10, 6))
 sns.barplot(
@@ -175,7 +172,7 @@ orders_df = pd.DataFrame({
 # ==============================
 # GELOCATION ANALYSIS
 # ==============================
-st.header("Analisis Kode Pos & State")
+st.header("Analisis Geolokasi")
 
 col1, col2 = st.columns(2)
 
@@ -351,6 +348,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
