@@ -324,7 +324,7 @@ def plot_brazil_map(data):
     # Label dan tampilan
     ax.set_xlabel("Longitude", fontsize=10)
     ax.set_ylabel("Latitude", fontsize=10)
-    ax.set_title("🗺️ Peta Brasil (Latar Lebih Lebar dari Scatter)", fontsize=16)
+    ax.set_title("🗺️ Peta Brasil", fontsize=16)
     ax.grid(False)
     plt.tight_layout()
     return fig
@@ -351,6 +351,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
