@@ -145,7 +145,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-st.title("🗺️ E-Commerce Geolocation & Purchase Analysis Dashboard")
+st.title("E-Commerce Geolocation & Purchase Analysis Dashboard")
 
 st.markdown("""
 Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
@@ -173,9 +173,9 @@ orders_df = pd.DataFrame({
 })
 
 # ==============================
-# 🏙️ GELOCATION ANALYSIS
+# GELOCATION ANALYSIS
 # ==============================
-st.header("🏙️ Analisis Kode Pos & State")
+st.header("Analisis Kode Pos & State")
 
 col1, col2 = st.columns(2)
 
@@ -203,9 +203,9 @@ with col2:
     st.dataframe(min_state.head(10))
 
 # ==============================
-# 🔗 MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
+# MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
 # ==============================
-st.header("🔗 Penggabungan Data Orders, Customers, dan Geolocation")
+st.header("Penggabungan Data Orders, Customers, dan Geolocation")
 
 orders_customers_geolocation_df = (
     orders_df
@@ -221,9 +221,9 @@ orders_customers_geolocation_df = (
 st.dataframe(orders_customers_geolocation_df.head())
 
 # ==============================
-# 📊 PURCHASES BY STATE
+# PURCHASES BY STATE
 # ==============================
-st.header("📊 Jumlah Pembelian per State")
+st.header("Jumlah Pembelian per State")
 
 purchases_by_state = (
     orders_customers_geolocation_df
@@ -238,7 +238,7 @@ locations_fewest_purchases = purchases_by_state.sort_values(by='Total Orders', a
 col3, col4 = st.columns(2)
 
 with col3:
-    st.subheader("📉 State dengan Pembelian Paling Sedikit")
+    st.subheader("State dengan Pembelian Paling Sedikit")
     st.dataframe(locations_fewest_purchases.head(10))
 
 with col4:
@@ -250,9 +250,9 @@ with col4:
     st.pyplot(fig)
 
 # ==============================
-# 🧭 CUSTOMERS SILVER & GEOLOCATION SILVER
+# CUSTOMERS SILVER & GEOLOCATION SILVER
 # ==============================
-st.header("🧭 Customers Silver Dataset")
+st.header("Customers Silver Dataset")
 
 customers_silver = customers_df.merge(
     geolocation_df,
@@ -339,7 +339,7 @@ customers_silver = pd.DataFrame({
 })
 
 # =====================================
-# 📊 Streamlit Layout
+# Streamlit Layout
 # =====================================
 st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
 st.markdown("""
@@ -351,6 +351,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
