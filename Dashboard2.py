@@ -25,7 +25,7 @@ st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 
 with st.sidebar:
     st.image(
-        "https://github.com/miracledestinator27/Project-Analisys-Data-remedial-/blob/caf0564086b71244f33fd2511069c11d4978d7ca/E-commerce-public-dataset/ultimaps-blank-map-of-brazil-states-labels.png",
+        "https://spiralcute.com/characters/mofusand/en/img/main.jpg",
         width=120
     )
     st.title("🇧🇷 E-Commerce Dashboard")
@@ -407,6 +407,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
