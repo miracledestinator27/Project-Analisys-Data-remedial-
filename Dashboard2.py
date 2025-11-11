@@ -61,7 +61,7 @@ def default_plot(ax, spines):
 
     return ax
 
-# --- Contoh data (ganti ini dengan data aslimu) ---
+
 # Pastikan struktur mirip dengan yang digunakan di kode kamu
 data = {
     'customer_state': ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC'],
@@ -100,10 +100,16 @@ plt.tight_layout()
 
 # --- Tampilkan di Streamlit ---
 st.header("1. Visualisasi Rata-rata Transaksi per Kota")
+st.markdown("""
+Dashboard ini menampilkan hasil Visualisasi Rata-rata transaksi pembelian per kota di Brazil
+""")
 st.pyplot(fig)
 
 # --- Judul Halaman ---
 st.header("2. Visualisasi Top 10 Kategori Produk Terbanyak")
+st.markdown("""
+Dashboard ini menampilkan hasil Visualisasi dari Kategori Produk yang paling banyak dibeli.
+""")
 
 # --- Contoh Data (ganti dengan data aslimu) ---
 data = {
@@ -146,7 +152,7 @@ st.header("3. E-Commerce Geolocation & Purchase Analysis Dashboard")
 
 st.markdown("""
 Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
-dengan visualisasi yang terintegrasi dalam format Streamlit.
+untuk menentukan Customer Silver dan menyimpulkan state yang paling sedikit pembeliannya.
 """)
 
 
@@ -172,7 +178,7 @@ orders_df = pd.DataFrame({
 # ==============================
 # GELOCATION ANALYSIS
 # ==============================
-st.header("Analisis Geolokasi")
+st.subheader("Analisis Geolokasi")
 
 col1, col2 = st.columns(2)
 
@@ -202,7 +208,6 @@ with col2:
 # ==============================
 # MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
 # ==============================
-st.subheader("Penggabungan Data Orders, Customers, dan Geolocation")
 
 orders_customers_geolocation_df = (
     orders_df
@@ -220,6 +225,7 @@ st.dataframe(orders_customers_geolocation_df.head())
 # ==============================
 # PURCHASES BY STATE
 # ==============================
+st.header("State dengan Pembelian Paling Sedikit")
 
 purchases_by_state = (
     orders_customers_geolocation_df
@@ -234,13 +240,13 @@ locations_fewest_purchases = purchases_by_state.sort_values(by='Total Orders', a
 col3, col4 = st.columns(2)
 
 with col3:
-    st.subheader("State dengan Pembelian Paling Sedikit")
+    st.header("State dengan Pembelian Paling Sedikit")
     st.dataframe(locations_fewest_purchases.head(11))
 
 with col4:
     fig, ax = plt.subplots(figsize=(8, 4))
     sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
-    ax.set_title("Jumlah Pembelian per State",fontsize=16)
+    ax.set_title("Jumlah Pembelian per State",)
     ax.set_xlabel("State")
     ax.set_ylabel("Total Orders")
     st.pyplot(fig)
@@ -347,6 +353,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
