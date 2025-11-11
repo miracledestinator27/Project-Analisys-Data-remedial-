@@ -281,7 +281,7 @@ st.dataframe(customers_silver.head(10))
 st.header("🗺️ Peta Persebaran Pelanggan di Brasil")
 def plot_brazil_map(data):
     # Ambil gambar peta Brasil
-    url = 'https://i.pinimg.com/originals/3a/0c/e1/3a0ce18b3c842748c255bc0aa445ad41.jpg'
+    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
     with urllib.request.urlopen(url) as u:
         brazil = mpimg.imread(u, 'jpg')
 
@@ -345,10 +345,8 @@ customers_silver = pd.DataFrame({
 # 📊 Streamlit Layout
 # =====================================
 st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
-st.title("🗺️ Visualisasi Pesebaran Pelanggan di Seluruh Brazil")
 st.markdown("""
-Berikut visualisasi peta Brasil di mana **gambar peta dibuat lebih lebar dari area sebaran titik pelanggan**.  
-Hal ini membantu menjaga konteks geografis dan memberikan ruang visual di sekitar data.
+Berikut visualisasi peta Brasil dan pesebaran pelanggannya.
 """)
 
 fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
@@ -356,6 +354,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
