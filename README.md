@@ -20,8 +20,8 @@ Project Data Analisis - Mira Detiyanti/
 │   ├── sales_df.csv
 │   ├── sellers_dataset.csv
 |   ├── ultimate-blank-map-of-brazil-states-labels.jpg
-├── MiraDestiyanti_Proyek_Analisis_Data
 ├── Dashboard2.py
+├── MiraDestiyanti_Proyek_Analisis_Data
 ├── README.md
 ├── requirements.txt
 └── url.txt
