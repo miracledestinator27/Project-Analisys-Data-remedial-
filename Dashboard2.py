@@ -28,7 +28,7 @@ with st.sidebar:
         "https://spiralcute.com/characters/mofusand/en/img/main.jpg",
         width=120
     )
-    st.title("🇧🇷 E-Commerce Dashboard")
+    st.title("E-Commerce Dashboard")
 
     st.markdown("---")
     st.subheader(" Filter Waktu")
@@ -168,7 +168,7 @@ Dashboard ini menampilkan hasil Visualisasi dari Kategori Produk yang paling ban
 # --- Contoh Data (ganti dengan data aslimu) ---
 data = {
     "product_category_name": [
-        "eletronicos", "beleza_saude", "moveis_decoracao", "esporte_lazer",
+        "cama_mesa_banho", "beleza_saude", "moveis_decoracao", "esporte_lazer",
         "informatica_acessorios", "brinquedos", "telefonia", "relogios_presentes",
         "perfumaria", "automotivo", "papelaria", "construcao_ferramentas"
     ],
@@ -407,6 +407,7 @@ st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
