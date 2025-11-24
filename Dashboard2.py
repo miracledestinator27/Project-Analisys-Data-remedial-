@@ -394,19 +394,10 @@ customers_silver = pd.DataFrame({
     'geolocation_lng': np.random.uniform(-73.8, -34.5,50)
 })
 
-# =====================================
-# Streamlit Layout
-# =====================================
-st.set_page_config(page_title="Peta Pelanggan Brasil", layout="wide")
-st.markdown("""
-Berikut visualisasi peta Brasil dan pesebaran pelanggannya.
-""")
-
-fig_map = plot_brazil_map(customers_silver.drop_duplicates(subset='customer_unique_id'))
-st.pyplot(fig_map)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
