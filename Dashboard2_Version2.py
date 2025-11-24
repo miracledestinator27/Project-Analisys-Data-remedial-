@@ -1,7 +1,6 @@
 import os
 from io import BytesIO
 import urllib.request
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -117,18 +116,7 @@ sample_sellers = pd.DataFrame({
 })
 
 
-# --- Lazy/cached loading: use safe_load_csv to read or fallback to sample data ---
-base_path = "E-commerce-public-dataset/E-Commerce Public Dataset"
 
-customers_df = safe_load_csv(os.path.join(base_path, "customers_dataset.csv"), sample_customers)
-geolocation_df = safe_load_csv(os.path.join(base_path, "geolocation_dataset.csv"), sample_geolocation)
-order_items_df = safe_load_csv(os.path.join(base_path, "order_items_dataset.csv"), sample_order_items)
-order_payments_df = safe_load_csv(os.path.join(base_path, "order_payments_dataset.csv"), sample_order_payments)
-order_reviews_df = safe_load_csv(os.path.join(base_path, "order_reviews_dataset.csv"), sample_order_reviews)
-orders_df = safe_load_csv(os.path.join(base_path, "orders_dataset.csv"), sample_orders)
-category_df = safe_load_csv(os.path.join(base_path, "product_category_name_translation.csv"), sample_category_translation)
-product_df = safe_load_csv(os.path.join(base_path, "products_dataset.csv"), sample_products)
-sellers_df = safe_load_csv(os.path.join(base_path, "sellers_dataset.csv"), sample_sellers)
 
 
 # ---------------------------
