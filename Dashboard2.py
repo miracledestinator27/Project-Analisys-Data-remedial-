@@ -59,7 +59,6 @@ pay_ord_cust = (
 # =======================
 # A. Customer Spending Analysis
 # =======================
-st.header("Analisis Pengeluaran Pelanggan (Customer Spending)")
 
 customer_spent = (
     pay_ord_cust.groupby('customer_unique_id')
@@ -262,7 +261,7 @@ st.sidebar.write(f"Menampilkan data dari tahun **{selected_years[0]} hingga {sel
 # ============================================
 st.header(" Analisis Kategori Produk")
 
-totals_product_df = order_items_df.merge(products_df, on="product_id", how="left")
+totals_product_df = order_items_df.merge(product_df, on="product_id", how="left")
 
 # Hitung total order per kategori
 category_counts = (
@@ -354,6 +353,7 @@ for year in years_available:
 st.success("Analisis kategori produk selesai ditampilkan ✔️")
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
