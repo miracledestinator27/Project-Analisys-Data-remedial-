@@ -236,27 +236,6 @@ year_counts = orders_df['year'].value_counts().sort_index()
 st.bar_chart(year_counts)
 
 # ============================================
-# 🎛 SIDEBAR FILTER WAKTU
-# ============================================
-st.sidebar.header(" Filter Tahun untuk Kategori Produk")
-
-min_year, max_year = orders_df['year'].min(), orders_df['year'].max()
-
-selected_years = st.sidebar.slider(
-    "Pilih rentang tahun:",
-    min_value=int(min_year),
-    max_value=int(max_year),
-    value=(int(min_year), int(max_year))
-)
-
-orders_filtered = orders_df[
-    (orders_df['year'] >= selected_years[0]) &
-    (orders_df['year'] <= selected_years[1])
-]
-
-st.sidebar.write(f"Menampilkan data dari tahun **{selected_years[0]} hingga {selected_years[1]}**")
-
-# ============================================
 #  MERGE PRODUCT & ITEM DATA
 # ============================================
 st.header(" Analisis Kategori Produk")
@@ -320,39 +299,46 @@ category_year_counts = (
 st.write("Berikut distribusi jumlah order kategori produk per tahun:")
 st.dataframe(category_year_counts.head(20))
 
-# ============================================
-# VISUAL PER TAHUN (LOOP)
-# ============================================
+# --- SIDEBAR FILTER TAHUN ---
+st.sidebar.header("Filter Tahun Kategori Produk")
+
 years_available = sorted(category_year_counts['year'].unique())
 
-for year in years_available:
-    st.subheader(f"Top 10 Kategori Produk Tahun {year}")
+selected_year = st.sidebar.selectbox(
+    "Pilih Tahun:",
+    years_available,
+    index=len(years_available) - 1  # default ke tahun terbaru
+)
 
-    data_year = (
-        category_year_counts[category_year_counts['year'] == year]
-        .sort_values(by='total_orders', ascending=False)
-        .head(10)
-    )
+# --- FILTER DATA BERDASARKAN TAHUN ---
+data_year = (
+    category_year_counts[category_year_counts['year'] == selected_year]
+    .sort_values(by='total_orders', ascending=False)
+    .head(10)
+)
 
-    fig2, ax2 = plt.subplots(figsize=(12, 5))
-    sns.barplot(
-        data=data_year,
-        x='product_category_name',
-        y='total_orders',
-        color="#1f77b4"
-    )
+st.subheader(f"📦 Top 10 Kategori Produk Tahun {selected_year}")
 
-    plt.title(f'Top 10 Kategori Produk — Tahun {year}')
-    plt.xlabel('Kategori Produk')
-    plt.ylabel('Total Order')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
+# --- BAR CHART ---
+fig, ax = plt.subplots(figsize=(12, 5))
 
-    st.pyplot(fig2)
+sns.barplot(
+    data=data_year,
+    x='product_category_name',
+    y='total_orders',
+    color='#1f77b4'
+)
 
-st.success("Analisis kategori produk selesai ditampilkan ✔️")
+plt.title(f'Top 10 Kategori Produk — Tahun {selected_year}')
+plt.xlabel('Kategori Produk')
+plt.ylabel('Total Order')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+st.pyplot(fig)
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
