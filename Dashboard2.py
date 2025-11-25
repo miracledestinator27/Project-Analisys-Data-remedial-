@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib.image as mpimg
 import streamlit as st
 from scipy import stats as sps   
+import altair as alt
 
 
 sns.set(style='dark')
@@ -252,9 +253,29 @@ orders_df['month'] = orders_df['order_purchase_timestamp'].dt.month
 orders_df['day']   = orders_df['order_purchase_timestamp'].dt.day
 orders_df['date']  = orders_df['order_purchase_timestamp'].dt.date
 
-st.subheader(" Informasi Jumlah Order per Tahun")
-year_counts = orders_df['year'].value_counts().sort_index()
-st.bar_chart(year_counts)
+st.subheader("Informasi Jumlah Order per Tahun")
+
+year_counts = (
+    orders_df['year']
+    .value_counts()
+    .sort_index()
+    .reset_index()
+)
+year_counts.columns = ["year", "total_orders"]
+
+# Visualisasi dengan warna khusus
+chart = (
+    alt.Chart(year_counts)
+    .mark_bar(color="#1f77b4")
+    .encode(
+        x=alt.X("year:O", title="Tahun"),
+        y=alt.Y("total_orders:Q", title="Jumlah Order"),
+        tooltip=["year", "total_orders"]
+    )
+    .properties(height=400)
+)
+
+st.altair_chart(chart, use_container_width=True)
 
 # ============================================
 #  MERGE PRODUCT & ITEM DATA
@@ -364,6 +385,7 @@ st.markdown("""
 Dinamika trasaksi E-commerce sangat beragam pada tahun 2016-2018 di Brazil, setiap tahun grafiknya pun menunjukan perbedaan tren yang berbeda berdasarkan kategori. Namun, setelah dikumpulkan informasinya dalam 3 tahun kategory produk cama_mesa_banho tetap paling diminati di beberapa kota di Brazil
 """)
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
