@@ -248,7 +248,7 @@ st.bar_chart(top_10_cities_df)
 
 
 
-t.write("### Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
+st.write("### Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
 
 # Create figure
 fig = plt.figure(figsize=(18, 7))
@@ -330,6 +330,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
