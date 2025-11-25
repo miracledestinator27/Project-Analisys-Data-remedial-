@@ -27,7 +27,6 @@ Project ini adalah tugas submission analysis data Python berdasarkan e-commerce 
 
 ## Struktur Folder
 
-```
 Project Data Analisis - Mira Detiyanti/
 ├── E-commerce-public-dataset/
 │   ├── customers_dataset.csv
@@ -48,4 +47,4 @@ Project Data Analisis - Mira Detiyanti/
 └── url.txt
 
 © 2025 - Proyek Analisis Data - Mira Destiyanti
-```
+
