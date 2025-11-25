@@ -17,7 +17,39 @@ pip install -r requirements.txt
 ```
 streamlit run dashboard2.py
 ```
+## Navigate to your project folder
+```
+cd /path/to/your/project
+```
+## Initialize git (if not already)
+```
+git init
+```
 
+## Add your notebook file
+```
+git add your_notebook.ipynb
+
+
+
+Or add everything:
+
+git add .
+```
+## Commit the changes
+```
+git commit -m "Add Jupyter notebook"
+```
+
+First push:
+```
+git push -u origin main
+```
+
+If your default branch is master:
+```
+git push -u origin master
+```
 
 # Project Analisis Data
 
