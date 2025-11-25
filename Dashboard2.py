@@ -10,6 +10,17 @@ from scipy import stats as sps
 sns.set(style='dark')
 st.title("E-commerce Dashboard")
 
+st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
+
+with st.sidebar:
+    st.image(
+        "https://spiralcute.com/characters/mofusand/en/img/main.jpg",
+        width=120
+    )
+    st.title("E-Commerce Dashboard")
+
+    st.markdown("---")
+    st.subheader(" Filter Waktu")
 
 st.header("1. Analisis Perilaku Konsumen & Transaksi")
 st.write("Dashboard ini menampilkan analisis spending customer, confidence interval, "
@@ -31,7 +42,7 @@ sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/se
 orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
 orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
 
-st.sidebar.header("📅 Filter Waktu")
+st.sidebar.header("Tabel Nilai Transaksi")
 
 min_year, max_year = int(orders_df['order_year'].min()), int(orders_df['order_year'].max())
 
@@ -317,7 +328,7 @@ data_year = (
     .head(10)
 )
 
-st.subheader(f"📦 Top 10 Kategori Produk Tahun {selected_year}")
+st.subheader(f"Top 10 Kategori Produk Tahun {selected_year}")
 
 # --- BAR CHART ---
 fig, ax = plt.subplots(figsize=(12, 5))
@@ -338,6 +349,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
