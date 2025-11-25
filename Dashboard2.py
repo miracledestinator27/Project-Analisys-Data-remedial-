@@ -11,7 +11,7 @@ sns.set(style='dark')
 st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 
 
-st.title("Analisis Perilaku Konsumen & Transaksi — E-Commerce Data")
+st.subtitle("1. Analisis Perilaku Konsumen & Transaksi")
 st.write("Dashboard ini menampilkan analisis spending customer, confidence interval, "
          "serta pola transaksi berdasarkan waktu, kota, dan kategori produk.")
 
@@ -212,54 +212,149 @@ plt.tight_layout()
 
 st.pyplot(fig2)
 
-# --- Judul Halaman ---
-st.header("2. Visualisasi Top 10 Kategori Produk Terbanyak")
-st.markdown("""
-Dashboard ini menampilkan hasil Visualisasi dari Kategori Produk yang paling banyak dibeli.
+# ============================================
+# TITLE
+# ============================================
+st.subtitle("2. Analisis Kategori Produk & Pola Order E-Commerce")
+
+st.write("""
+Dashboard ini menampilkan analisis persebaran kategori produk, tren pembelian berdasarkan waktu, serta
+kategori produk paling populer dari waktu ke waktu.
 """)
 
-# --- Contoh Data (ganti dengan data aslimu) ---
-data = {
-    "product_category_name": [
-        "cama_mesa_banho", "beleza_saude", "moveis_decoracao", "esporte_lazer",
-        "informatica_acessorios", "brinquedos", "telefonia", "relogios_presentes",
-        "perfumaria", "automotivo", "papelaria", "construcao_ferramentas"
-    ],
-    "total_orders": [5200, 4300, 3900, 3700, 3400, 3100, 3000, 2700, 2500, 2300, 2200, 2100]
-}
 
-category_counts = pd.DataFrame(data)
+# ============================================
+# PREPROCESSING WAKTU
+# ============================================
+orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+orders_df['year']  = orders_df['order_purchase_timestamp'].dt.year
+orders_df['month'] = orders_df['order_purchase_timestamp'].dt.month
+orders_df['day']   = orders_df['order_purchase_timestamp'].dt.day
+orders_df['date']  = orders_df['order_purchase_timestamp'].dt.date
 
-# --- Urutkan dan ambil 10 teratas ---
-top_categories = category_counts.sort_values(by="total_orders", ascending=False).head(10)
+st.subheader(" Informasi Jumlah Order per Tahun")
+year_counts = orders_df['year'].value_counts().sort_index()
+st.bar_chart(year_counts)
 
-# --- Tampilkan tabel di Streamlit ---
-st.subheader("Tabel")
-st.dataframe(top_categories.reset_index(drop=True))
+# ============================================
+# 🎛 SIDEBAR FILTER WAKTU
+# ============================================
+st.sidebar.header(" Filter Tahun")
 
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.barplot(
-    x="product_category_name",
-    y="total_orders",
-    data=top_categories,
-    palette="viridis",
-    ax=ax
+min_year, max_year = orders_df['year'].min(), orders_df['year'].max()
+
+selected_years = st.sidebar.slider(
+    "Pilih rentang tahun:",
+    min_value=int(min_year),
+    max_value=int(max_year),
+    value=(int(min_year), int(max_year))
 )
-ax.set_title("Top 10 Kategori Produk Terbanyak (Jumlah Order)")
-ax.set_xlabel("Kategori Produk")
-ax.set_ylabel("Jumlah Order")
+
+orders_filtered = orders_df[
+    (orders_df['year'] >= selected_years[0]) &
+    (orders_df['year'] <= selected_years[1])
+]
+
+st.sidebar.write(f"Menampilkan data dari tahun **{selected_years[0]} hingga {selected_years[1]}**")
+
+# ============================================
+#  MERGE PRODUCT & ITEM DATA
+# ============================================
+st.header(" Analisis Kategori Produk")
+
+totals_product_df = order_items_df.merge(products_df, on="product_id", how="left")
+
+# Hitung total order per kategori
+category_counts = (
+    totals_product_df.groupby("product_category_name")["order_id"]
+    .count()
+    .reset_index()
+    .rename(columns={"order_id": "total_orders"})
+)
+
+top_categories = category_counts.sort_values(by="total_orders", ascending=False)
+
+st.subheader("Top 10 Kategori Produk Terbanyak di Order")
+st.dataframe(top_categories.head(10))
+
+# ============================================
+# VISUALISASI TOP 10 KATEGORI PRODUK
+# ============================================
+fig, ax = plt.subplots(figsize=(10, 6))
+
+sns.barplot(
+    x=top_categories.head(10)["product_category_name"],
+    y=top_categories.head(10)["total_orders"],
+    color="#1f77b4"
+)
+
+plt.title("Top 10 Kategori Produk Terbanyak (Jumlah Order)")
+plt.xlabel("Kategori Produk")
+plt.ylabel("Jumlah Order")
 plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 
-# --- Tampilkan di Streamlit ---
 st.pyplot(fig)
 
+# ============================================
+# TREND KATEGORI PRODUK PER TAHUN
+# ============================================
+st.header("📈 Tren Kategori Produk Berdasarkan Tahun")
 
+# Merge items + product + tahun order
+items_products = order_items_df.merge(products_df, on="product_id", how="left")
+items_products_year = items_products.merge(
+    orders_df[['order_id', 'year']],
+    on="order_id",
+    how="left"
+)
 
+category_year_counts = (
+    items_products_year
+    .groupby(['year', 'product_category_name'])['order_id']
+    .count()
+    .reset_index()
+    .rename(columns={'order_id': 'total_orders'})
+)
 
+# Tampilkan data
+st.write("Berikut distribusi jumlah order kategori produk per tahun:")
+st.dataframe(category_year_counts.head(20))
 
+# ============================================
+# VISUAL PER TAHUN (LOOP)
+# ============================================
+years_available = sorted(category_year_counts['year'].unique())
+
+for year in years_available:
+    st.subheader(f"Top 10 Kategori Produk Tahun {year}")
+
+    data_year = (
+        category_year_counts[category_year_counts['year'] == year]
+        .sort_values(by='total_orders', ascending=False)
+        .head(10)
+    )
+
+    fig2, ax2 = plt.subplots(figsize=(12, 5))
+    sns.barplot(
+        data=data_year,
+        x='product_category_name',
+        y='total_orders',
+        color="#1f77b4"
+    )
+
+    plt.title(f'Top 10 Kategori Produk — Tahun {year}')
+    plt.xlabel('Kategori Produk')
+    plt.ylabel('Total Order')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+
+    st.pyplot(fig2)
+
+st.success("Analisis kategori produk selesai ditampilkan ✔️")
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
