@@ -56,12 +56,12 @@ st.dataframe(filtered_orders)
 
 st.write("### Menghitung Rata-rata Transaksi Produk per Tahun dan Kota")
 
-st.header("Rata-rata Pembelanjaan Pelanggan & Confidence Interval per Wilayah")
+st.header("Rata-rata Pembelanjaan Pelanggan per Wilayah")
 
 # --- MERGE DATASET ---
 pay_ord_cust = (
     orders_df
-    .merge(order_payment_df, on='order_id', how='outer')
+    .merge(order_payments_df, on='order_id', how='outer')
     .merge(customers_df, on='customer_id', how='outer')
 )
 
@@ -354,6 +354,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
