@@ -8,8 +8,13 @@ from scipy import stats as sps
 
 
 sns.set(style='dark')
+st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 
-# Membaca data (pastikan Anda sudah memiliki file data yang sesuai)
+
+st.title("Analisis Perilaku Konsumen & Transaksi — E-Commerce Data")
+st.write("Dashboard ini menampilkan analisis spending customer, confidence interval, "
+         "serta pola transaksi berdasarkan waktu, kota, dan kategori produk.")
+
 
 customers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/customers_dataset.csv")
 geolocation_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/geolocation_dataset.csv")
@@ -22,116 +27,113 @@ product_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/pr
 sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/sellers_dataset.csv")
 
 
-st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
+# Timestamp → datetime
+orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
 
-
-# Streamlit header
-st.title('E-commerce Dashboard')
-
-# --- SIDEBAR ---
 st.sidebar.header("📅 Filter Waktu")
 
-# Rentang tahun dinamis berdasarkan dataset
-min_year = int(orders_df['order_year'].min())
-max_year = int(orders_df['order_year'].max())
+min_year, max_year = int(orders_df['order_year'].min()), int(orders_df['order_year'].max())
 
-selected_years = st.sidebar.slider(
+year_range = st.sidebar.slider(
     "Pilih Rentang Tahun:",
     min_value=min_year,
     max_value=max_year,
     value=(min_year, max_year)
 )
 
-# Month filter (1–12)
-selected_months = st.sidebar.multiselect(
-    "Pilih Bulan:",
-    options=list(range(1, 13)),
-    default=list(range(1, 13)),
-    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B")
-)
-
-st.sidebar.markdown("---")
-st.sidebar.caption("Gunakan filter di atas untuk menyesuaikan analisis transaksi berdasarkan waktu.")
-
-# --- APPLY FILTER ---
+# Filter berdasarkan tahun
 filtered_orders = orders_df[
-    (orders_df['order_year'] >= selected_years[0]) &
-    (orders_df['order_year'] <= selected_years[1]) &
-    (orders_df['order_month'].isin(selected_months))
+    (orders_df['order_year'] >= year_range[0]) &
+    (orders_df['order_year'] <= year_range[1])
 ]
 
-# --- DISPLAY SUMMARY BOX IN SIDEBAR ---
-st.sidebar.markdown("### 📊 Ringkasan Data Terfilter")
-st.sidebar.metric("Jumlah Transaksi", len(filtered_orders))
-st.sidebar.metric("Jumlah Tahun Terpilih", len(range(selected_years[0], selected_years[1] + 1)))
-st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
+st.sidebar.write(f"Rentang Tahun Aktif: **{year_range[0]} - {year_range[1]}**")
 
-# --- TOTAL PEMBELANJAAN PER CUSTOMER ---
+pay_ord_cust = (
+    filtered_orders
+    .merge(order_payments_df, on="order_id", how="outer")
+    .merge(customers_df, on="customer_id", how="outer")
+)
+
+# =======================
+# A. Customer Spending Analysis
+# =======================
+st.header("Analisis Pengeluaran Pelanggan (Customer Spending)")
+
 customer_spent = (
-    pay_ord_cust
-    .groupby('customer_unique_id')
-    .agg(total_spent=('payment_value', 'sum'))
-    .sort_values(by='total_spent', ascending=False)
+    pay_ord_cust.groupby('customer_unique_id')
+    .agg({'payment_value': 'sum'})
+    .sort_values('payment_value', ascending=False)
 )
 
-# Mean & Std Error
-customer_mean = customer_spent['total_spent'].mean()
-customer_std = sps.sem(customer_spent['total_spent'])
+customer_mean = customer_spent['payment_value'].mean()
+customer_sem = sps.sem(customer_spent['payment_value'])
 
-# Confidence interval (95%)
-ci_customer = sps.t.interval(
+ci_low, ci_high = sps.t.interval(
     0.95,
-    df=len(customer_spent) - 1,
     loc=customer_mean,
-    scale=customer_std
+    scale=customer_sem,
+    df=len(customer_spent) - 1
 )
 
-# --- DISPLAY IN STREAMLIT ---
-st.subheader("Rata-rata Belanja Pelanggan")
-st.write(f"**Mean spending:** {customer_mean:,.2f}")
-st.write(f"**95% Confidence Interval:** {ci_customer}")
+st.subheader("📌 Ringkasan")
+st.write(f"""
+- **Rata-rata pengeluaran pelanggan**: ${customer_mean:,.2f}  
+- **95% Confidence Interval**: (${ci_low:,.2f}  —  ${ci_high:,.2f})  
+- **Jumlah pelanggan**: {customer_spent.shape[0]}
+""")
 
-# --- MEAN PER REGION (STATE) ---
+# =======================
+# B. Customer Spending per Kota wilayah
+# =======================
+st.header("Analisis Pengeluaran berdasarkan Kota")
+
 customer_regions = (
-    pay_ord_cust
-    .groupby('customer_state')
-    .agg(
-        mean_payment=('payment_value', np.mean),
-        std_payment=('payment_value', np.std),
-        n_customers=('customer_unique_id', 'count')
-    )
-    .reset_index()
+    pay_ord_cust.groupby("customer_state")
+    .agg({
+        'payment_value': ['mean', 'std'],
+        'customer_unique_id': 'count'
+    })
 )
 
-# Hitung CI per region
+customer_regions.reset_index(inplace=True)
+
+# Hitung CI per state
 cis = sps.t.interval(
     0.95,
-    df=customer_regions['n_customers'] - 1,
-    loc=customer_regions['mean_payment'],
-    scale=customer_regions['std_payment'] / np.sqrt(customer_regions['n_customers'])
+    loc=customer_regions['payment_value']['mean'],
+    scale=customer_regions['payment_value']['std'] /
+          np.sqrt(customer_regions['customer_unique_id']['count']),
+    df=customer_regions['customer_unique_id']['count'] - 1
 )
 
-customer_regions['ci_low'] = cis[0]
-customer_regions['ci_hi'] = cis[1]
+customer_regions["ci_low"] = cis[0]
+customer_regions["ci_high"] = cis[1]
 
-# --- DISPLAY TABLE ---
-st.subheader("Confidence Interval Pembelanjaan per State")
-st.dataframe(customer_regions)
+# ---------- Plot ----------
+st.subheader("Rata-rata Transaksi per Kota")
 
-# Pastikan timestamp menjadi datetime
-orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+fig, ax = plt.subplots(figsize=(12, 4))
+plot = customer_regions.sort_values(('payment_value', 'mean'))
 
-# Tambahkan kolom tahun
-orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
-
-# Merge orders + payments + customers
-pay_ord_cust = (
-    orders_df
-    .merge(order_payments_df, on='order_id', how='outer')
-    .merge(customers_df, on='customer_id', how='outer')
+ax.bar(
+    plot['customer_state'],
+    plot['payment_value']['mean']
 )
 
-# Hitung rata-rata transaksi berdasarkan kota & tahun
+plt.xticks(rotation=30)
+plt.xlabel("State")
+plt.ylabel("Rata-rata Transaksi")
+plt.tight_layout()
+
+st.pyplot(fig)
+
+# =======================
+# C. Rata-rata Transaksi per Kota per Tahun
+# =======================
+st.header("Rata-rata Nilai Transaksi per Kota per Tahun")
+
 avg_transaction_city_year = (
     pay_ord_cust.groupby(['order_year', 'customer_city'])
     .agg(
@@ -141,95 +143,44 @@ avg_transaction_city_year = (
     .reset_index()
 )
 
-# Tampilkan dataframe di Streamlit
-st.write("### Rata-rata Transaksi Produk per Tahun dan Kota")
-st.dataframe(avg_transaction_city_year)
+st.dataframe(avg_transaction_city_year.head(20))
 
-# --- DATA MERGE ---
-pay_ord_cust = (
-    orders_df
-        .merge(order_payments_df, on='order_id', how='outer')
-        .merge(customers_df, on='customer_id', how='outer')
-)
+# =======================
+# Top 10 Kota dengan Rata-rata Transaksi Tertinggi
+# =======================
+st.header(" Top 10 Kota dengan Rata-rata Transaksi Tertinggi")
 
-st.write("### Merged Dataset: Orders + Payments + Customers")
-st.dataframe(pay_ord_cust)
-
-
-# --- Rata-rata transaksi per kota ---
 avg_city = (
     pay_ord_cust.groupby('customer_city')
     .agg({'payment_value': 'mean'})
     .sort_values('payment_value', ascending=False)
 )
 
-# --- Ambil 10 kota teratas ---
 top_10_cities = avg_city.head(10).index
 
-st.write("### Rata-rata Transaksi per Kota")
-st.dataframe(avg_city)
+st.write("Berikut adalah top 10 kota dengan transaksi rata-rata tertinggi:")
 
-st.write("### 10 Kota dengan Rata-rata Transaksi Tertinggi")
-st.write(top_10_cities.tolist())
+st.dataframe(avg_city.head(10))
 
-avg_city = (
-    pay_ord_cust.groupby('customer_city')
-    .agg({'payment_value': 'mean'})
-    .sort_values('payment_value', ascending=False)
+# =======================
+#  E. Tren Per Tahun per Kategori Produk untuk Top 10 Kota
+# =======================
+st.header(" Tren Kategori Produk di Top 10 Kota")
+
+# merge items + product category
+items_prod = order_items_df.merge(products_df, on='product_id', how='left')
+
+full_df = (
+    pay_ord_cust.merge(
+        items_prod[['order_id', 'product_id', 'product_category_name']],
+        on='order_id', how='left'
+    )
 )
 
+filtered_df = full_df[full_df['customer_city'].isin(top_10_cities)]
 
-
-# --- Top 5 kategori per kota per tahun ---
-top5_per_city_year = (
-    trend_city_cat_year
-    .sort_values(['order_year', 'customer_city', 'total_transactions'], ascending=False)
-    .groupby(['order_year', 'customer_city'])
-    .head(5)
-)
-
-st.write("### Top 5 Kategori Produk per Kota per Tahun")
-st.dataframe(top5_per_city_year)
-
-
-avg_city = (
-    pay_ord_cust.groupby('customer_city')
-    .agg({'payment_value': 'mean'})
-    .sort_values('payment_value', ascending=False)
-)
-
-top_10_cities_df = avg_city.head(10)
-
-st.write("### Top 10 Kota dengan Rata-rata Transaksi Tertinggi")
-st.bar_chart(top_10_cities_df)
-
-
-# --- Merge order_items + products ---
-items_prod = order_items_df.merge(
-    product_df,
-    on='product_id',
-    how='left'
-)
-
-# --- Gabungkan dengan pay_ord_cust (tambahkan kategori produk) ---
-full_df = pay_ord_cust.merge(
-    items_prod[['order_id', 'product_id', 'product_category_name']],
-    on='order_id',
-    how='left'
-)
-
-st.write("### Full DataFrame (Orders + Payment + Customer + Product Category)")
-st.dataframe(full_df)
-
-# --- Filter hanya 10 kota teratas ---
-filtered = full_df[full_df['customer_city'].isin(top_10_cities)]
-
-st.write("### Filtered for Top 10 Cities")
-st.dataframe(filtered.head())
-
-# --- Grouping trend per Tahun, Kota, dan Kategori Produk ---
 trend_city_cat_year = (
-    filtered.groupby(['order_year', 'customer_city', 'product_category_name'])
+    filtered_df.groupby(['order_year', 'customer_city', 'product_category_name'])
     .agg(
         avg_transaction=('payment_value', 'mean'),
         total_transactions=('payment_value', 'count')
@@ -237,37 +188,21 @@ trend_city_cat_year = (
     .reset_index()
 )
 
-st.write("### Trend per Tahun, Kota, dan Kategori Produk")
-st.dataframe(trend_city_cat_year)
+# ---------- Plot Tren ----------
+st.subheader("Tren Rata-rata Transaksi per Kategori per Tahun (Top 10 Kota)")
 
-# --- Top 5 kategori per kota per tahun ---
-top5_per_city_year = (
-    trend_city_cat_year
-    .sort_values(['order_year', 'customer_city', 'total_transactions'], ascending=False)
-    .groupby(['order_year', 'customer_city'])
-    .head(5)
-)
+fig2, ax2 = plt.subplots(figsize=(18, 7))
 
-st.write("### Top 5 Kategori Produk per Kota per Tahun")
-st.dataframe(top5_per_city_year)
+for year in sorted(trend_city_cat_year['order_year'].unique()):
+    subset = trend_city_cat_year[trend_city_cat_year['order_year'] == year]
 
-st.subheader("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
-
-# --- Buat Figure ---
-fig, ax = plt.subplots(figsize=(18, 7))
-
-# Loop setiap tahun
-for year in sorted(top5_per_city_year['order_year'].unique()):
-    subset = top5_per_city_year[top5_per_city_year['order_year'] == year]
-    
-    ax.bar(
+    ax2.bar(
         subset['product_category_name'] + " (" + subset['customer_city'] + ")",
         subset['avg_transaction'],
         alpha=0.7,
         label=f"Tahun {year}"
     )
 
-# Label dan gaya
 plt.xticks(rotation=90)
 plt.xlabel("Kategori Produk (per Kota)")
 plt.ylabel("Rata-rata Nilai Transaksi")
@@ -275,21 +210,7 @@ plt.title("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
 plt.legend()
 plt.tight_layout()
 
-# --- Tampilkan di Streamlit ---
-st.pyplot(fig)
-
-# --- MERGE DATASET ---
-pay_ord_cust = (
-    orders_df
-    .merge(order_payments_df, on='order_id', how='outer')
-    .merge(customers_df, on='customer_id', how='outer')
-)
-
-
-
-
-
-
+st.pyplot(fig2)
 
 # --- Judul Halaman ---
 st.header("2. Visualisasi Top 10 Kategori Produk Terbanyak")
@@ -339,6 +260,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
