@@ -246,31 +246,6 @@ top_10_cities_df = avg_city.head(10)
 st.write("### Top 10 Kota dengan Rata-rata Transaksi Tertinggi")
 st.bar_chart(top_10_cities_df)
 
-# Sort data
-plot = customer_regions.sort_values(by=('payment_value', 'mean'))
-
-st.write("### Rata-rata Transaksi per Kota")
-
-# Create figure
-fig, ax = plt.subplots(figsize=(12, 4))
-
-# Bar chart (single blue color)
-ax.bar(
-    plot['customer_state'],
-    plot['payment_value']['mean'],
-    color="#1f77b4"
-)
-
-# Labels and formatting
-plt.xticks(rotation=30)
-plt.xlabel('Kota')
-plt.ylabel('Rata-rata Transaksi')
-
-plt.tight_layout()
-
-# Display in Streamlit
-st.pyplot(fig)
-
 
 
 t.write("### Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
@@ -355,6 +330,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
