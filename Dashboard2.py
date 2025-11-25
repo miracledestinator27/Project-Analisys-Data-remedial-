@@ -135,7 +135,7 @@ st.pyplot(fig)
 # =======================
 # C. Rata-rata Transaksi per Kota per Tahun
 # =======================
-st.header("Rata-rata Nilai Transaksi per Kota per Tahun")
+st.header("Tabel Rata-rata Nilai Transaksi per Kota per Tahun")
 
 avg_transaction_city_year = (
     pay_ord_cust.groupby(['order_year', 'customer_city'])
@@ -348,7 +348,12 @@ plt.tight_layout()
 
 st.pyplot(fig)
 
+st.subheader("KESIMPULAN")
+st.write("Bagaimana prediksi kategori produk yang paling banyak dibeli? apakah perbedaan kategorinya cukup jauh, dan mempengaruhi tren? 
+Dinamika trasaksi E-commerce sangat beragam pada tahun 2016-2018 di Brazil, setiap tahun grafiknya pun menunjukan perbedaan tren yang berbeda berdasarkan kategori. 
+Namun, setelah dikumpulkan informasinya dalam 3 tahun kategory produk cama_mesa_banho tetap paling diminati di beberapa kota di Brazil")
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
