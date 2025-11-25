@@ -221,10 +221,6 @@ st.write(f"""
 - **Jumlah pelanggan**: {customer_spent.shape[0]}
 """)
 
-st.write("KESIMPULAN" "Bagaimana tren rata-rata pembelanjaan pelanggan menurut dari pesebaran kota-kota di Brazil? 
-jika dirunutkan atau dibreakdown terdapat banyak jenis-jenis produk yang telah dijual di wilayah brazil, perkembangannya bisa berbeda akan menarik lagi dari setiap kota memiliki tren produk yang berbeda-beda juga dan beragam, tidak ada hanya 1 jenis produk yang menonjol. Pada kota-kota besar cendrung memiliki lebih banyak jenis transaksi sebaliknya kebutuhan di Kota kecil tidak terlalu banyak sehingga trennya juga tidak terlihan beragam.
-analisi ini menghasilkan fakta bahwa rata-rata pengeluaran pelanggan sebesar $166.59 atau sekitar 95% dari skala Confidence Interval: (165.13—165.13—168.06)
-dari total jumlah pelanggan sebanyak 96096 yang tersebar di kota-kota Brazil."")
 
 # ============================================
 # TITLE
@@ -352,11 +348,8 @@ plt.tight_layout()
 
 st.pyplot(fig)
 
-st.write("KESIMPULAN""Bagaimana prediksi kategori produk yang paling banyak dibeli? apakah perbedaan kategorinya cukup jauh, dan mempengaruhi tren? 
-Dinamika trasaksi E-commerce sangat beragam pada tahun 2016-2018 di Brazil, setiap tahun grafiknya pun menunjukan perbedaan tren yang berbeda berdasarkan kategori. 
-Namun, setelah dikumpulkan informasinya dalam 3 tahun kategory produk cama_mesa_banho tetap paling diminati di beberapa kota di Brazil"")
-
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
