@@ -222,7 +222,7 @@ st.write(f"""
 """)
 
 st.markdown("---")
-st.markdown("## KESIMPULAN")
+st.markdown("## KESIMPULAN 1")
 
 st.markdown("""
 Bagaimana tren rata-rata pembelanjaan pelanggan menurut dari pesebaran kota-kota di Brazil? 
@@ -298,7 +298,7 @@ st.pyplot(fig)
 # ============================================
 # TREND KATEGORI PRODUK PER TAHUN
 # ============================================
-st.header("📈 Tren Kategori Produk Berdasarkan Tahun")
+st.header("Tren Kategori Produk Berdasarkan Tahun")
 
 # Merge items + product + tahun order
 items_products = order_items_df.merge(product_df, on="product_id", how="left")
@@ -358,12 +358,13 @@ plt.tight_layout()
 
 st.pyplot(fig)
 st.markdown("---")
-st.markdown("## KESIMPULAN")
+st.markdown("## KESIMPULAN 2")
 
 st.markdown("""
 Dinamika trasaksi E-commerce sangat beragam pada tahun 2016-2018 di Brazil, setiap tahun grafiknya pun menunjukan perbedaan tren yang berbeda berdasarkan kategori. Namun, setelah dikumpulkan informasinya dalam 3 tahun kategory produk cama_mesa_banho tetap paling diminati di beberapa kota di Brazil
 """)
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
