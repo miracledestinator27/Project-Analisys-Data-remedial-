@@ -15,13 +15,13 @@ pip install -r requirements.txt
 ## Run steamlit app
 streamlit run dashboard2.py
 ```
-## Navigate to your project folder
+## Navigate to project folder
 cd /path/to/your/project
 ```
 ## Initialize git (if not already)
 git init
 ```
-## Add your notebook file
+## Add notebook file
 git add Mira_Desiyanti_Proyek_Analisis_Data.ipynb
 ```
 ## Commit the changes
