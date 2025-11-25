@@ -75,7 +75,7 @@ customer_spent = (
 
 # Mean & Std Error
 customer_mean = customer_spent['total_spent'].mean()
-customer_std = stats.sem(customer_spent['total_spent'])
+customer_std = st.sem(customer_spent['total_spent'])
 
 # Confidence interval (95%)
 ci_customer = stats.t.interval(
@@ -354,6 +354,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
