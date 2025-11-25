@@ -54,6 +54,95 @@ filtered_orders = orders_df[orders_df['order_year'] == selected_year]
 st.write(f"### Orders for Year: {selected_year}")
 st.dataframe(filtered_orders)
 
+st.write("### Menghitung Rata-rata Transaksi Produk per Tahun dan Kota")
+
+st.header("Rata-rata Pembelanjaan Pelanggan & Confidence Interval per Wilayah")
+
+# --- MERGE DATASET ---
+pay_ord_cust = (
+    orders_df
+    .merge(order_payment_df, on='order_id', how='outer')
+    .merge(customers_df, on='customer_id', how='outer')
+)
+
+# --- TOTAL PEMBELANJAAN PER CUSTOMER ---
+customer_spent = (
+    pay_ord_cust
+    .groupby('customer_unique_id')
+    .agg(total_spent=('payment_value', 'sum'))
+    .sort_values(by='total_spent', ascending=False)
+)
+
+# Mean & Std Error
+customer_mean = customer_spent['total_spent'].mean()
+customer_std = stats.sem(customer_spent['total_spent'])
+
+# Confidence interval (95%)
+ci_customer = stats.t.interval(
+    0.95,
+    df=len(customer_spent) - 1,
+    loc=customer_mean,
+    scale=customer_std
+)
+
+# --- DISPLAY IN STREAMLIT ---
+st.subheader("Rata-rata Belanja Pelanggan")
+st.write(f"**Mean spending:** {customer_mean:,.2f}")
+st.write(f"**95% Confidence Interval:** {ci_customer}")
+
+# --- MEAN PER REGION (STATE) ---
+customer_regions = (
+    pay_ord_cust
+    .groupby('customer_state')
+    .agg(
+        mean_payment=('payment_value', np.mean),
+        std_payment=('payment_value', np.std),
+        n_customers=('customer_unique_id', 'count')
+    )
+    .reset_index()
+)
+
+# Hitung CI per region
+cis = stats.t.interval(
+    0.95,
+    df=customer_regions['n_customers'] - 1,
+    loc=customer_regions['mean_payment'],
+    scale=customer_regions['std_payment'] / np.sqrt(customer_regions['n_customers'])
+)
+
+customer_regions['ci_low'] = cis[0]
+customer_regions['ci_hi'] = cis[1]
+
+# --- DISPLAY TABLE ---
+st.subheader("Confidence Interval Pembelanjaan per State")
+st.dataframe(customer_regions)
+
+# Pastikan timestamp menjadi datetime
+orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+
+# Tambahkan kolom tahun
+orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
+
+# Merge orders + payments + customers
+pay_ord_cust = (
+    orders_df
+    .merge(order_payment_df, on='order_id', how='outer')
+    .merge(customers_df, on='customer_id', how='outer')
+)
+
+# Hitung rata-rata transaksi berdasarkan kota & tahun
+avg_transaction_city_year = (
+    pay_ord_cust.groupby(['order_year', 'customer_city'])
+    .agg(
+        avg_transaction_value=('payment_value', 'mean'),
+        transaction_count=('payment_value', 'count')
+    )
+    .reset_index()
+)
+
+# Tampilkan dataframe di Streamlit
+st.write("### Rata-rata Transaksi Produk per Tahun dan Kota")
+st.dataframe(avg_transaction_city_year)
 
 # --- DATA MERGE ---
 pay_ord_cust = (
@@ -265,6 +354,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
