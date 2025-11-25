@@ -28,11 +28,6 @@ st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 # Streamlit header
 st.title('E-commerce Dashboard')
 
-# Pastikan datetime
-orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
-orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
-orders_df['order_month'] = orders_df['order_purchase_timestamp'].dt.month
-
 # --- SIDEBAR ---
 st.sidebar.header("📅 Filter Waktu")
 
@@ -70,88 +65,6 @@ st.sidebar.markdown("### 📊 Ringkasan Data Terfilter")
 st.sidebar.metric("Jumlah Transaksi", len(filtered_orders))
 st.sidebar.metric("Jumlah Tahun Terpilih", len(range(selected_years[0], selected_years[1] + 1)))
 st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
-
-
-# --- Merge order_items + products ---
-items_prod = order_items_df.merge(
-    product_df,
-    on='product_id',
-    how='left'
-)
-
-# --- Gabungkan dengan pay_ord_cust (tambahkan kategori produk) ---
-full_df = pay_ord_cust.merge(
-    items_prod[['order_id', 'product_id', 'product_category_name']],
-    on='order_id',
-    how='left'
-)
-
-st.write("### Full DataFrame (Orders + Payment + Customer + Product Category)")
-st.dataframe(full_df)
-
-# --- Filter hanya 10 kota teratas ---
-filtered = full_df[full_df['customer_city'].isin(top_10_cities)]
-
-st.write("### Filtered for Top 10 Cities")
-st.dataframe(filtered.head())
-
-# --- Grouping trend per Tahun, Kota, dan Kategori Produk ---
-trend_city_cat_year = (
-    filtered.groupby(['order_year', 'customer_city', 'product_category_name'])
-    .agg(
-        avg_transaction=('payment_value', 'mean'),
-        total_transactions=('payment_value', 'count')
-    )
-    .reset_index()
-)
-
-st.write("### Trend per Tahun, Kota, dan Kategori Produk")
-st.dataframe(trend_city_cat_year)
-
-# --- Top 5 kategori per kota per tahun ---
-top5_per_city_year = (
-    trend_city_cat_year
-    .sort_values(['order_year', 'customer_city', 'total_transactions'], ascending=False)
-    .groupby(['order_year', 'customer_city'])
-    .head(5)
-)
-
-st.write("### Top 5 Kategori Produk per Kota per Tahun")
-st.dataframe(top5_per_city_year)
-
-st.subheader("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
-
-# --- Buat Figure ---
-fig, ax = plt.subplots(figsize=(18, 7))
-
-# Loop setiap tahun
-for year in sorted(top5_per_city_year['order_year'].unique()):
-    subset = top5_per_city_year[top5_per_city_year['order_year'] == year]
-    
-    ax.bar(
-        subset['product_category_name'] + " (" + subset['customer_city'] + ")",
-        subset['avg_transaction'],
-        alpha=0.7,
-        label=f"Tahun {year}"
-    )
-
-# Label dan gaya
-plt.xticks(rotation=90)
-plt.xlabel("Kategori Produk (per Kota)")
-plt.ylabel("Rata-rata Nilai Transaksi")
-plt.title("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
-plt.legend()
-plt.tight_layout()
-
-# --- Tampilkan di Streamlit ---
-st.pyplot(fig)
-
-# --- MERGE DATASET ---
-pay_ord_cust = (
-    orders_df
-    .merge(order_payments_df, on='order_id', how='outer')
-    .merge(customers_df, on='customer_id', how='outer')
-)
 
 # --- TOTAL PEMBELANJAAN PER CUSTOMER ---
 customer_spent = (
@@ -291,6 +204,89 @@ st.write("### Top 10 Kota dengan Rata-rata Transaksi Tertinggi")
 st.bar_chart(top_10_cities_df)
 
 
+# --- Merge order_items + products ---
+items_prod = order_items_df.merge(
+    product_df,
+    on='product_id',
+    how='left'
+)
+
+# --- Gabungkan dengan pay_ord_cust (tambahkan kategori produk) ---
+full_df = pay_ord_cust.merge(
+    items_prod[['order_id', 'product_id', 'product_category_name']],
+    on='order_id',
+    how='left'
+)
+
+st.write("### Full DataFrame (Orders + Payment + Customer + Product Category)")
+st.dataframe(full_df)
+
+# --- Filter hanya 10 kota teratas ---
+filtered = full_df[full_df['customer_city'].isin(top_10_cities)]
+
+st.write("### Filtered for Top 10 Cities")
+st.dataframe(filtered.head())
+
+# --- Grouping trend per Tahun, Kota, dan Kategori Produk ---
+trend_city_cat_year = (
+    filtered.groupby(['order_year', 'customer_city', 'product_category_name'])
+    .agg(
+        avg_transaction=('payment_value', 'mean'),
+        total_transactions=('payment_value', 'count')
+    )
+    .reset_index()
+)
+
+st.write("### Trend per Tahun, Kota, dan Kategori Produk")
+st.dataframe(trend_city_cat_year)
+
+# --- Top 5 kategori per kota per tahun ---
+top5_per_city_year = (
+    trend_city_cat_year
+    .sort_values(['order_year', 'customer_city', 'total_transactions'], ascending=False)
+    .groupby(['order_year', 'customer_city'])
+    .head(5)
+)
+
+st.write("### Top 5 Kategori Produk per Kota per Tahun")
+st.dataframe(top5_per_city_year)
+
+st.subheader("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
+
+# --- Buat Figure ---
+fig, ax = plt.subplots(figsize=(18, 7))
+
+# Loop setiap tahun
+for year in sorted(top5_per_city_year['order_year'].unique()):
+    subset = top5_per_city_year[top5_per_city_year['order_year'] == year]
+    
+    ax.bar(
+        subset['product_category_name'] + " (" + subset['customer_city'] + ")",
+        subset['avg_transaction'],
+        alpha=0.7,
+        label=f"Tahun {year}"
+    )
+
+# Label dan gaya
+plt.xticks(rotation=90)
+plt.xlabel("Kategori Produk (per Kota)")
+plt.ylabel("Rata-rata Nilai Transaksi")
+plt.title("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
+plt.legend()
+plt.tight_layout()
+
+# --- Tampilkan di Streamlit ---
+st.pyplot(fig)
+
+# --- MERGE DATASET ---
+pay_ord_cust = (
+    orders_df
+    .merge(order_payments_df, on='order_id', how='outer')
+    .merge(customers_df, on='customer_id', how='outer')
+)
+
+
+
 
 
 
@@ -343,6 +339,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
