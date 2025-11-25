@@ -48,3 +48,4 @@ Project Data Analisis - Mira Detiyanti/
 └── url.txt
 
 © 2025 - Proyek Analisis Data - Mira Destiyanti
+```
