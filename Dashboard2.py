@@ -238,7 +238,7 @@ st.bar_chart(year_counts)
 # ============================================
 # 🎛 SIDEBAR FILTER WAKTU
 # ============================================
-st.sidebar.header(" Filter Tahun")
+st.sidebar.header(" Filter Tahun untuk Kategori Produk")
 
 min_year, max_year = orders_df['year'].min(), orders_df['year'].max()
 
@@ -301,7 +301,7 @@ st.pyplot(fig)
 st.header("📈 Tren Kategori Produk Berdasarkan Tahun")
 
 # Merge items + product + tahun order
-items_products = order_items_df.merge(products_df, on="product_id", how="left")
+items_products = order_items_df.merge(product_df, on="product_id", how="left")
 items_products_year = items_products.merge(
     orders_df[['order_id', 'year']],
     on="order_id",
@@ -353,6 +353,7 @@ for year in years_available:
 st.success("Analisis kategori produk selesai ditampilkan ✔️")
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
