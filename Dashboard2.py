@@ -8,10 +8,10 @@ from scipy import stats as sps
 
 
 sns.set(style='dark')
-st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
+st.title("E-commerce Dashboard", layout="wide")
 
 
-st.subtitle("1. Analisis Perilaku Konsumen & Transaksi")
+st.header("1. Analisis Perilaku Konsumen & Transaksi")
 st.write("Dashboard ini menampilkan analisis spending customer, confidence interval, "
          "serta pola transaksi berdasarkan waktu, kota, dan kategori produk.")
 
@@ -215,7 +215,7 @@ st.pyplot(fig2)
 # ============================================
 # TITLE
 # ============================================
-st.subtitle("2. Analisis Kategori Produk & Pola Order E-Commerce")
+st.header("2. Analisis Kategori Produk & Pola Order E-Commerce")
 
 st.write("""
 Dashboard ini menampilkan analisis persebaran kategori produk, tren pembelian berdasarkan waktu, serta
@@ -354,6 +354,7 @@ for year in years_available:
 st.success("Analisis kategori produk selesai ditampilkan ✔️")
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
