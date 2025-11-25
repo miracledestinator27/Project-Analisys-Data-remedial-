@@ -57,6 +57,6 @@ Project Data Analisis - Mira Detiyanti/
 ├── README.md
 ├── requirements.txt
 └── url.txt
-
+```
 © 2025 - Proyek Analisis Data - Mira Destiyanti
 
