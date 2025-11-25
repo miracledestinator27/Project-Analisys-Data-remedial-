@@ -71,6 +71,43 @@ st.sidebar.metric("Jumlah Transaksi", len(filtered_orders))
 st.sidebar.metric("Jumlah Tahun Terpilih", len(range(selected_years[0], selected_years[1] + 1)))
 st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
 
+
+# --- Merge order_items + products ---
+items_prod = order_items_df.merge(
+    products_df,
+    on='product_id',
+    how='left'
+)
+
+# --- Gabungkan dengan pay_ord_cust (tambahkan kategori produk) ---
+full_df = pay_ord_cust.merge(
+    items_prod[['order_id', 'product_id', 'product_category_name']],
+    on='order_id',
+    how='left'
+)
+
+st.write("### Full DataFrame (Orders + Payment + Customer + Product Category)")
+st.dataframe(full_df)
+
+# --- Filter hanya 10 kota teratas ---
+filtered = full_df[full_df['customer_city'].isin(top_10_cities)]
+
+st.write("### Filtered for Top 10 Cities")
+st.dataframe(filtered.head())
+
+# --- Grouping trend per Tahun, Kota, dan Kategori Produk ---
+trend_city_cat_year = (
+    filtered.groupby(['order_year', 'customer_city', 'product_category_name'])
+    .agg(
+        avg_transaction=('payment_value', 'mean'),
+        total_transactions=('payment_value', 'count')
+    )
+    .reset_index()
+)
+
+st.write("### Trend per Tahun, Kota, dan Kategori Produk")
+st.dataframe(trend_city_cat_year)
+
 # --- Top 5 kategori per kota per tahun ---
 top5_per_city_year = (
     trend_city_cat_year
@@ -81,8 +118,6 @@ top5_per_city_year = (
 
 st.write("### Top 5 Kategori Produk per Kota per Tahun")
 st.dataframe(top5_per_city_year)
-# Export filtered data to the main app
-filtered_orders
 
 st.subheader("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
 
@@ -308,6 +343,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
