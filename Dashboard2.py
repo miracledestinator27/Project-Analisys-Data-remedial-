@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 import urllib.request
 import matplotlib.image as mpimg
+from scipy import stats as st
 
 sns.set(style='dark')
 
@@ -78,7 +79,7 @@ customer_mean = customer_spent['total_spent'].mean()
 customer_std = st.sem(customer_spent['total_spent'])
 
 # Confidence interval (95%)
-ci_customer = stats.t.interval(
+ci_customer = st.t.interval(
     0.95,
     df=len(customer_spent) - 1,
     loc=customer_mean,
@@ -354,6 +355,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
