@@ -168,7 +168,7 @@ st.dataframe(avg_city.head(10))
 st.header(" Tren Kategori Produk di Top 10 Kota")
 
 # merge items + product category
-items_prod = order_items_df.merge(products_df, on='product_id', how='left')
+items_prod = order_items_df.merge(product_df, on='product_id', how='left')
 
 full_df = (
     pay_ord_cust.merge(
@@ -260,6 +260,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
