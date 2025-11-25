@@ -189,7 +189,7 @@ st.write(top_10_cities.tolist())
 
 # --- Merge order_items + products ---
 items_prod = order_items_df.merge(
-    products_df,
+    product_df,
     on='product_id',
     how='left'
 )
@@ -355,6 +355,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
