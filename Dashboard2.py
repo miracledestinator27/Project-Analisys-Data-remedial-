@@ -221,6 +221,30 @@ st.write(f"""
 - **Jumlah pelanggan**: {customer_spent.shape[0]}
 """)
 
+st.markdown("---")
+st.markdown("## KESIMPULAN")
+
+st.markdown("""
+**Bagaimana tren rata-rata pembelanjaan pelanggan menurut penyebaran kota-kota di Brazil?**
+
+Dari hasil analisis, terdapat berbagai jenis produk yang terjual di berbagai kota di Brazil. Setiap kota memiliki karakteristik transaksi dan kategori produk yang berbeda-beda. Tidak ada satu kategori produk yang dominan secara nasional — kota-kota besar memiliki jenis transaksi yang jauh lebih beragam, sedangkan kota-kota kecil cenderung memiliki kebutuhan yang lebih spesifik sehingga variasi kategorinya lebih sedikit.
+
+Analisis ini juga menghasilkan fakta penting mengenai perilaku pelanggan:
+
+- **Rata-rata pengeluaran pelanggan:** **$166.59**
+- **Confidence Interval (95%):** **165.13 — 168.06**
+- **Jumlah total pelanggan:** **96,096 pelanggan**
+- **Sebaran geografis:** pelanggan tersebar di banyak kota di seluruh Brazil, dengan variasi aktivitas transaksi yang signifikan antar kota.
+
+Secara keseluruhan, pola belanja di Brazil menunjukkan bahwa:
+- Kota besar → volume transaksi lebih besar + kategori lebih beragam  
+- Kota kecil → transaksi lebih sedikit + kategori lebih sedikit  
+- Tidak ada kategori tunggal yang mendominasi secara nasional  
+- Rata-rata pembelanjaan cukup stabil di kisaran ~166 USD  
+
+Hasil ini dapat dijadikan dasar untuk memahami perilaku pasar, segmentasi pelanggan, dan strategi produk pada wilayah Brazil.
+""")
+
 
 # ============================================
 # TITLE
@@ -349,6 +373,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
