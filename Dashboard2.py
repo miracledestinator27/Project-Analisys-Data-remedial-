@@ -104,7 +104,7 @@ customer_regions = (
 )
 
 # Hitung CI per region
-cis = stats.t.interval(
+cis = sps.t.interval(
     0.95,
     df=customer_regions['n_customers'] - 1,
     loc=customer_regions['mean_payment'],
@@ -355,6 +355,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
