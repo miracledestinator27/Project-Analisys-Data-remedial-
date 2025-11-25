@@ -295,11 +295,20 @@ st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
 filtered_orders
 
 
+fig, ax = plt.subplots(figsize=(12, 4))
+
+ax.bar(
+    plot['customer_state'], 
+    plot['payment_value']['mean'],
+    color="#1f77b4"
+)
+
+plt.xticks(rotation=30)
+plt.xlabel('Kota')
+plt.ylabel('Rata-rata Transaksi')
+plt.tight_layout()
+
 # --- Tampilkan di Streamlit ---
-st.header("1. Visualisasi Rata-rata Transaksi per Kota")
-st.markdown("""
-Dashboard ini menampilkan hasil Visualisasi Rata-rata transaksi pembelian per kota di Brazil
-""")
 st.pyplot(fig)
 
 # --- Judul Halaman ---
@@ -350,6 +359,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
