@@ -12,31 +12,24 @@ pipenv install
 pipenv shell
 pip install -r requirements.txt
 ```
-
 ## Run steamlit app
 streamlit run dashboard2.py
 ```
-
 ## Navigate to your project folder
 cd /path/to/your/project
 ```
-
 ## Initialize git (if not already)
 git init
 ```
-
 ## Add your notebook file
 git add Mira_Desiyanti_Proyek_Analisis_Data.ipynb
 ```
-
 ## Commit the changes
 git commit -m "Add Jupyter notebook"
 ```
-
 ## First push:
 git push -u origin main
 ```
-
 If your default branch is master:
 git push -u origin master
 ```
