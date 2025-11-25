@@ -39,6 +39,7 @@ git push -u origin master
 Project ini adalah tugas submission analysis data Python berdasarkan e-commerce ata set
 
 ## Struktur Folder
+```
 Project Data Analisis - Mira Detiyanti/
 ├── E-commerce-public-dataset/
 │   ├── customers_dataset.csv
@@ -57,6 +58,6 @@ Project Data Analisis - Mira Detiyanti/
 ├── README.md
 ├── requirements.txt
 └── url.txt
-```
+
 © 2025 - Proyek Analisis Data - Mira Destiyanti
 
