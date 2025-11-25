@@ -127,7 +127,7 @@ orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
 # Merge orders + payments + customers
 pay_ord_cust = (
     orders_df
-    .merge(order_payment_df, on='order_id', how='outer')
+    .merge(order_payments_df, on='order_id', how='outer')
     .merge(customers_df, on='customer_id', how='outer')
 )
 
@@ -148,7 +148,7 @@ st.dataframe(avg_transaction_city_year)
 # --- DATA MERGE ---
 pay_ord_cust = (
     orders_df
-        .merge(order_payment_df, on='order_id', how='outer')
+        .merge(order_payments_df, on='order_id', how='outer')
         .merge(customers_df, on='customer_id', how='outer')
 )
 
@@ -355,6 +355,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
