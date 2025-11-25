@@ -71,6 +71,16 @@ st.sidebar.metric("Jumlah Transaksi", len(filtered_orders))
 st.sidebar.metric("Jumlah Tahun Terpilih", len(range(selected_years[0], selected_years[1] + 1)))
 st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
 
+# --- Top 5 kategori per kota per tahun ---
+top5_per_city_year = (
+    trend_city_cat_year
+    .sort_values(['order_year', 'customer_city', 'total_transactions'], ascending=False)
+    .groupby(['order_year', 'customer_city'])
+    .head(5)
+)
+
+st.write("### Top 5 Kategori Produk per Kota per Tahun")
+st.dataframe(top5_per_city_year)
 # Export filtered data to the main app
 filtered_orders
 
@@ -298,6 +308,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
