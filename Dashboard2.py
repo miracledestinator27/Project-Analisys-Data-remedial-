@@ -8,7 +8,7 @@ from scipy import stats as sps
 
 
 sns.set(style='dark')
-st.title("E-commerce Dashboard", layout="wide")
+st.title("E-commerce Dashboard")
 
 
 st.header("1. Analisis Perilaku Konsumen & Transaksi")
@@ -354,6 +354,7 @@ for year in years_available:
 st.success("Analisis kategori produk selesai ditampilkan ✔️")
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
