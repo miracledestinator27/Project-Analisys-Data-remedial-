@@ -23,6 +23,9 @@ sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/se
 
 st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 
+orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
+
 with st.sidebar:
     st.image(
         "https://spiralcute.com/characters/mofusand/en/img/main.jpg",
@@ -202,201 +205,12 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-st.header("3. E-Commerce Geolocation & Purchase Analysis Dashboard")
 
-st.markdown("""
-Dashboard ini menampilkan hasil analisis gabungan antara **orders, customers, dan geolocation data**  
-untuk menentukan Customer Silver dan menyimpulkan state yang paling sedikit pembeliannya.
-""")
-
-
-np.random.seed(42)
-geolocation_df = pd.DataFrame({
-    'geolocation_zip_code_prefix': np.random.randint(10000, 99999, 100),
-    'geolocation_city': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
-    'geolocation_state': np.random.choice(['SP', 'RJ', 'MG', 'RS', 'BA', 'SC'], 100),
-    'geolocation_lat': np.random.uniform(-33.5, 5, 100),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5, 100)
-})
-customers_df = pd.DataFrame({
-    'customer_id': [f"C{i}" for i in range(1, 51)],
-    'customer_unique_id': [f"U{i}" for i in range(1, 51)],
-    'customer_zip_code_prefix': np.random.choice(geolocation_df['geolocation_zip_code_prefix'], 50)
-})
-orders_df = pd.DataFrame({
-    'order_id': [f"O{i}" for i in range(1, 100)],
-    'customer_id': np.random.choice(customers_df['customer_id'], 99),
-    'order_status': np.random.choice(['delivered', 'shipped', 'cancelled'], 99)
-})
-
-# ==============================
-# GELOCATION ANALYSIS
-# ==============================
-st.subheader("Analisis Geolokasi")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    other_state_geolocation = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix'])['geolocation_state']
-        .nunique()
-        .reset_index(name='count')
-    )
-    multi_state_zip = other_state_geolocation[other_state_geolocation['count'] >= 2]
-    st.metric("Jumlah kode pos di lebih dari 1 state", multi_state_zip.shape[0])
-    st.dataframe(multi_state_zip)
-
-with col2:
-    min_state = (
-        geolocation_df
-        .groupby(['geolocation_zip_code_prefix', 'geolocation_state'])
-        .size()
-        .reset_index(name='count')
-        .drop_duplicates(subset='geolocation_zip_code_prefix')
-        .drop('count', axis=1)
-    )
-    st.write("**State representatif per kode pos:**")
-    st.dataframe(min_state.head(11))
-
-# ==============================
-# MERGE DATA ORDERS + CUSTOMERS + GEOLOCATION
-# ==============================
-
-orders_customers_geolocation_df = (
-    orders_df
-    .merge(customers_df, on='customer_id', how='left')
-    .merge(
-        geolocation_df,
-        left_on='customer_zip_code_prefix',
-        right_on='geolocation_zip_code_prefix',
-        how='left'
-    )
-)
-
-st.dataframe(orders_customers_geolocation_df.head())
-
-# ==============================
-# PURCHASES BY STATE
-# ==============================
-st.header("State dengan Pembelian Paling Sedikit")
-
-purchases_by_state = (
-    orders_customers_geolocation_df
-    .groupby('geolocation_state')['order_id']
-    .nunique()
-    .reset_index()
-    .rename(columns={'geolocation_state': 'State', 'order_id': 'Total Orders'})
-)
-
-locations_fewest_purchases = purchases_by_state.sort_values(by='Total Orders', ascending=True)
-
-col3, col4 = st.columns(2)
-
-with col3:
-    st.header("State dengan Pembelian Paling Sedikit")
-    st.dataframe(locations_fewest_purchases.head(11))
-
-with col4:
-    fig, ax = plt.subplots(figsize=(8, 4))
-    sns.barplot(x='State', y='Total Orders', data=purchases_by_state, palette='viridis', ax=ax)
-    ax.set_title("Jumlah Pembelian per State",)
-    ax.set_xlabel("State")
-    ax.set_ylabel("Total Orders")
-    st.pyplot(fig)
-
-# ==============================
-# CUSTOMERS SILVER & GEOLOCATION SILVER
-# ==============================
-st.subheader("Customers Silver Dataset")
-
-customers_silver = customers_df.merge(
-    geolocation_df,
-    left_on='customer_zip_code_prefix',
-    right_on='geolocation_zip_code_prefix',
-    how='inner'
-)
-
-geolocation_silver = (
-    geolocation_df
-    .groupby(['geolocation_zip_code_prefix', 'geolocation_city', 'geolocation_state'])[['geolocation_lat', 'geolocation_lng']]
-    .median()
-    .reset_index()
-)
-geolocation_silver = geolocation_silver.merge(
-    min_state,
-    on=['geolocation_zip_code_prefix', 'geolocation_state'],
-    how='inner'
-)
-
-st.dataframe(customers_silver.head(6))
-
-# ==============================
-# 🗺️ MAP VISUALIZATION (CUSTOMERS)
-# ==============================
-st.subheader("Peta Persebaran Pelanggan di Brasil")
-def plot_brazil_map(data):
-    # Ambil gambar peta Brasil
-    url = 'https://i.etsystatic.com/13226531/r/il/c06652/5334273483/il_fullxfull.5334273483_53rs.jpg'
-    with urllib.request.urlopen(url) as u:
-        brazil = mpimg.imread(u, 'jpg')
-
-    data_lon_min, data_lon_max = data["geolocation_lng"].min(), data["geolocation_lng"].max()
-    data_lat_min, data_lat_max = data["geolocation_lat"].min(), data["geolocation_lat"].max()
-
-    # Batas peta dibuat lebih lebar dari data
-    # Tambahkan margin kiri/kanan/atas/bawah agar peta tampak lebih luas
-    lon_margin = 47
-    lat_margin = 12
-
-    map_lon_min = data_lon_min - lon_margin
-    map_lon_max = data_lon_max + lon_margin
-    map_lat_min = data_lat_min - lat_margin
-    map_lat_max = data_lat_max + lat_margin
-
-    # Buat plot
-    fig, ax = plt.subplots(figsize=(32, 7))
-    ax.imshow(brazil, extent=[map_lon_min, map_lon_max, map_lat_min, map_lat_max], zorder=1)
-
-    # Scatter pelanggan
-    ax.scatter(
-        data["geolocation_lng"],
-        data["geolocation_lat"],
-        s=8,
-        alpha=0.8,
-        color='yellow',
-        edgecolor='black',
-        linewidth=0.5,
-        zorder=2
-    )
-
-    # Atur batas tampilan (fokus ke area data saja)
-    ax.set_xlim(map_lon_min, map_lon_max)
-    ax.set_ylim(map_lat_min, map_lat_max)
-
-    # Rasio aspek disesuaikan agar proporsional (lebih lebar)
-    ax.set_aspect('equal', adjustable='box')
-
-    # Label dan tampilan
-    ax.set_xlabel("Longitude", fontsize=10)
-    ax.set_ylabel("Latitude", fontsize=10)
-    ax.set_title("Peta Brasil", fontsize=16)
-    ax.grid(False)
-    plt.tight_layout()
-    return fig
-
-
-
-np.random.seed(99)
-customers_silver = pd.DataFrame({
-    'customer_unique_id': [f'U{i}' for i in range(50)],
-    'geolocation_lat': np.random.uniform(-33.5, 5, 50),
-    'geolocation_lng': np.random.uniform(-73.8, -34.5,50)
-})
 
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
