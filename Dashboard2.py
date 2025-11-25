@@ -248,31 +248,51 @@ st.bar_chart(top_10_cities_df)
 
 
 
-st.write("### Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
+# Pastikan datetime
+orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
+orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
+orders_df['order_month'] = orders_df['order_purchase_timestamp'].dt.month
 
-# Create figure
-fig = plt.figure(figsize=(18, 7))
+# --- SIDEBAR ---
+st.sidebar.header("📅 Filter Waktu")
 
-# Loop each year
-for year in sorted(top5_per_city_year['order_year'].unique()):
-    subset = top5_per_city_year[top5_per_city_year['order_year'] == year]
+# Rentang tahun dinamis berdasarkan dataset
+min_year = int(orders_df['order_year'].min())
+max_year = int(orders_df['order_year'].max())
 
-    plt.bar(
-        subset['product_category_name'] + " (" + subset['customer_city'] + ")",
-        subset['avg_transaction'],
-        alpha=0.7,
-        label=f"Tahun {year}"
-    )
+selected_years = st.sidebar.slider(
+    "Pilih Rentang Tahun:",
+    min_value=min_year,
+    max_value=max_year,
+    value=(min_year, max_year)
+)
 
-plt.xticks(rotation=90)
-plt.xlabel("Kategori Produk (per Kota)")
-plt.ylabel("Rata-rata Nilai Transaksi")
-plt.title("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
-plt.legend()
-plt.tight_layout()
+# Month filter (1–12)
+selected_months = st.sidebar.multiselect(
+    "Pilih Bulan:",
+    options=list(range(1, 13)),
+    default=list(range(1, 13)),
+    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B")
+)
 
-# Display in Streamlit
-st.pyplot(fig) 
+st.sidebar.markdown("---")
+st.sidebar.caption("Gunakan filter di atas untuk menyesuaikan analisis transaksi berdasarkan waktu.")
+
+# --- APPLY FILTER ---
+filtered_orders = orders_df[
+    (orders_df['order_year'] >= selected_years[0]) &
+    (orders_df['order_year'] <= selected_years[1]) &
+    (orders_df['order_month'].isin(selected_months))
+]
+
+# --- DISPLAY SUMMARY BOX IN SIDEBAR ---
+st.sidebar.markdown("### 📊 Ringkasan Data Terfilter")
+st.sidebar.metric("Jumlah Transaksi", len(filtered_orders))
+st.sidebar.metric("Jumlah Tahun Terpilih", len(range(selected_years[0], selected_years[1] + 1)))
+st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
+
+# Export filtered data to the main app
+filtered_orders
 
 
 # --- Tampilkan di Streamlit ---
@@ -330,6 +350,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
