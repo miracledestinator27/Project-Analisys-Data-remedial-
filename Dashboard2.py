@@ -24,40 +24,10 @@ sellers_df = pd.read_csv("E-commerce-public-dataset/E-Commerce Public Dataset/se
 
 st.set_page_config(page_title="E-commerce Dashboard", layout="wide")
 
-orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
-orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
-
 
 # Streamlit header
 st.title('E-commerce Dashboard')
 
-# --- Load and preprocess ---
-orders_df['order_purchase_timestamp'] = pd.to_datetime(orders_df['order_purchase_timestamp'])
-orders_df['order_year'] = orders_df['order_purchase_timestamp'].dt.year
-
-# --- SIDEBAR UI ---
-st.sidebar.header("Filter Orders")
-
-# unique sorted years
-years = sorted(orders_df['order_year'].unique())
-
-# year selection in sidebar
-selected_year = st.sidebar.selectbox(
-    "Select Order Year",
-    options=years,
-    index=0
-)
-
-# filter dataframe
-filtered_orders = orders_df[orders_df['order_year'] == selected_year]
-
-# --- Display result ---
-st.write(f"### Orders for Year: {selected_year}")
-st.dataframe(filtered_orders)
-
-st.write("### Menghitung Rata-rata Transaksi Produk per Tahun dan Kota")
-
-st.header("Rata-rata Pembelanjaan Pelanggan per Wilayah")
 
 # --- MERGE DATASET ---
 pay_ord_cust = (
@@ -294,7 +264,32 @@ st.sidebar.metric("Jumlah Bulan Terpilih", len(selected_months))
 # Export filtered data to the main app
 filtered_orders
 
+st.subheader("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
 
+# --- Buat Figure ---
+fig, ax = plt.subplots(figsize=(18, 7))
+
+# Loop setiap tahun
+for year in sorted(top5_per_city_year['order_year'].unique()):
+    subset = top5_per_city_year[top5_per_city_year['order_year'] == year]
+    
+    ax.bar(
+        subset['product_category_name'] + " (" + subset['customer_city'] + ")",
+        subset['avg_transaction'],
+        alpha=0.7,
+        label=f"Tahun {year}"
+    )
+
+# Label dan gaya
+plt.xticks(rotation=90)
+plt.xlabel("Kategori Produk (per Kota)")
+plt.ylabel("Rata-rata Nilai Transaksi")
+plt.title("Top 10 Kota: Tren Rata-rata Transaksi per Kategori Produk per Tahun")
+plt.legend()
+plt.tight_layout()
+
+# --- Tampilkan di Streamlit ---
+st.pyplot(fig)
 
 # --- Judul Halaman ---
 st.header("2. Visualisasi Top 10 Kategori Produk Terbanyak")
@@ -344,6 +339,7 @@ st.pyplot(fig)
 
 
 st.caption('Copyright (C) Mira Destiyanti 2025')
+
 
 
 
